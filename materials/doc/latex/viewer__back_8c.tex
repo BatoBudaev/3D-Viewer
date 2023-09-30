@@ -1,0 +1,375 @@
+\hypertarget{viewer__back_8c}{}\doxysection{backend/viewer\+\_\+back.c File Reference}
+\label{viewer__back_8c}\index{backend/viewer\_back.c@{backend/viewer\_back.c}}
+
+
+Набор функций для обработки данных 3D-\/моделей.  
+
+
+{\ttfamily \#include \char`\"{}viewer\+\_\+back.\+h\char`\"{}}\newline
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+int \mbox{\hyperlink{viewer__back_8c_a5d123eae61d07b5f9a37d3b7f83eec41}{is\+Digit}} (char c)
+\begin{DoxyCompactList}\small\item\em Проверка, является ли символ цифрой. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{viewer__back_8c_a58c3a8a45927bd0a2c93d6298c60992c}{convert\+\_\+string\+\_\+to\+\_\+number}} (char str\mbox{[}$\,$\mbox{]}, int $\ast$pos, char ans\mbox{[}$\,$\mbox{]})
+\begin{DoxyCompactList}\small\item\em Преобразование строки в числовое значение. \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{viewer__back_8c_a5017f44f3f74d9c20d50712dd78d85ec}{get\+\_\+cnt\+\_\+char\+\_\+obj}} (char $\ast$path, char c)
+\begin{DoxyCompactList}\small\item\em Получение количества символов заданного типа в файле. \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{viewer__back_8c_a783521bda89ee58040514405422a943a}{get\+\_\+cnt\+\_\+num\+\_\+in\+\_\+line\+\_\+obj}} (char $\ast$path, char c)
+\begin{DoxyCompactList}\small\item\em Получение количества чисел в строке файла. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{viewer__back_8c_ad878762be93a98c0c4c24c43f45f56bf}{init\+\_\+vertex}} (\mbox{\hyperlink{viewer__back_8h_ae063168c61ca691d48441e61cb5f3b95}{vertexes\+\_\+t}} $\ast$vv, int cnt\+\_\+v)
+\begin{DoxyCompactList}\small\item\em Инициализация структуры вершин. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{viewer__back_8c_ad4b05584aa5a1fd434ac6fc993605c09}{clear\+\_\+vertex}} (\mbox{\hyperlink{viewer__back_8h_ae063168c61ca691d48441e61cb5f3b95}{vertexes\+\_\+t}} $\ast$vv)
+\begin{DoxyCompactList}\small\item\em Освобождение памяти, выделенной для структуры вершин. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{viewer__back_8c_a0b2816cd51c21247480398e53c599bdf}{init\+\_\+facets}} (\mbox{\hyperlink{viewer__back_8h_a962f22911094b1c2113f809255066209}{facets\+\_\+t}} $\ast$ff, int cnt\+\_\+l\+\_\+f)
+\begin{DoxyCompactList}\small\item\em Инициализация структуры граней. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{viewer__back_8c_af8d69c845e993870abddca90e7b1864b}{clear\+\_\+facets}} (\mbox{\hyperlink{viewer__back_8h_a962f22911094b1c2113f809255066209}{facets\+\_\+t}} $\ast$ff)
+\begin{DoxyCompactList}\small\item\em Освобождение памяти, выделенной для структуры граней. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{viewer__back_8c_ab1e87c2d2ca9ba1fcc9676b73b24232e}{read\+\_\+obj}} (const char $\ast$path, \mbox{\hyperlink{viewer__back_8h_ae063168c61ca691d48441e61cb5f3b95}{vertexes\+\_\+t}} $\ast$vv, \mbox{\hyperlink{viewer__back_8h_a962f22911094b1c2113f809255066209}{facets\+\_\+t}} $\ast$ff)
+\begin{DoxyCompactList}\small\item\em Чтение данных из файла 3D-\/модели. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{viewer__back_8c_ac390ce4ae20a0fc7bda1de893891e545}{scale}} (\mbox{\hyperlink{viewer__back_8h_ae063168c61ca691d48441e61cb5f3b95}{vertexes\+\_\+t}} $\ast$vv, float multiplier)
+\begin{DoxyCompactList}\small\item\em Масштабирование вершин модели. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{viewer__back_8c_a4f3dfd4bc14e7678199c5aa9f28c195a}{shift}} (\mbox{\hyperlink{viewer__back_8h_ae063168c61ca691d48441e61cb5f3b95}{vertexes\+\_\+t}} $\ast$vv, float dx, float dy, float dz)
+\begin{DoxyCompactList}\small\item\em Сдвиг вершин модели. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{viewer__back_8c_af1cdb7c7b6db3575bba36dd3f31c4d2b}{rotate\+\_\+x}} (\mbox{\hyperlink{viewer__back_8h_ae063168c61ca691d48441e61cb5f3b95}{vertexes\+\_\+t}} $\ast$vv, float angle)
+\begin{DoxyCompactList}\small\item\em Поворот вершин модели вокруг оси X. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{viewer__back_8c_acb7bfe0656b75f11c596bac8af14149c}{rotate\+\_\+y}} (\mbox{\hyperlink{viewer__back_8h_ae063168c61ca691d48441e61cb5f3b95}{vertexes\+\_\+t}} $\ast$vv, float angle)
+\begin{DoxyCompactList}\small\item\em Поворот вершин модели вокруг оси Y. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{viewer__back_8c_a4e7fc7dc296ca5ffd67b43c9ea3f877f}{rotate\+\_\+z}} (\mbox{\hyperlink{viewer__back_8h_ae063168c61ca691d48441e61cb5f3b95}{vertexes\+\_\+t}} $\ast$vv, float angle)
+\begin{DoxyCompactList}\small\item\em Поворот вершин модели вокруг оси Z. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{structp3f}{p3f}} \mbox{\hyperlink{viewer__back_8c_ad968f45d9c2c12d4a568a23c8afcff7a}{calc\+\_\+center}} (\mbox{\hyperlink{viewer__back_8h_ae063168c61ca691d48441e61cb5f3b95}{vertexes\+\_\+t}} $\ast$vv)
+\begin{DoxyCompactList}\small\item\em Вычисление центра масс вершин модели. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{viewer__back_8c_a7db9c8df39fbbe0620435983d1889c5d}{rotate}} (\mbox{\hyperlink{viewer__back_8h_ae063168c61ca691d48441e61cb5f3b95}{vertexes\+\_\+t}} $\ast$vv, char axis, float angle)
+\begin{DoxyCompactList}\small\item\em Поворот вершин модели вокруг заданной оси. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Набор функций для обработки данных 3D-\/моделей. 
+
+
+
+\doxysubsection{Function Documentation}
+\mbox{\Hypertarget{viewer__back_8c_ad968f45d9c2c12d4a568a23c8afcff7a}\label{viewer__back_8c_ad968f45d9c2c12d4a568a23c8afcff7a}} 
+\index{viewer\_back.c@{viewer\_back.c}!calc\_center@{calc\_center}}
+\index{calc\_center@{calc\_center}!viewer\_back.c@{viewer\_back.c}}
+\doxysubsubsection{\texorpdfstring{calc\_center()}{calc\_center()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{structp3f}{p3f}} calc\+\_\+center (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{viewer__back_8h_ae063168c61ca691d48441e61cb5f3b95}{vertexes\+\_\+t}} $\ast$}]{vv }\end{DoxyParamCaption})}
+
+
+
+Вычисление центра масс вершин модели. 
+
+Вычисление центра объекта.
+
+
+\begin{DoxyParams}{Parameters}
+{\em vv} & Указатель на структуру vertexes\+\_\+t. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Структура \mbox{\hyperlink{structp3f}{p3f}}, представляющая координаты центра масс. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{viewer__back_8c_af8d69c845e993870abddca90e7b1864b}\label{viewer__back_8c_af8d69c845e993870abddca90e7b1864b}} 
+\index{viewer\_back.c@{viewer\_back.c}!clear\_facets@{clear\_facets}}
+\index{clear\_facets@{clear\_facets}!viewer\_back.c@{viewer\_back.c}}
+\doxysubsubsection{\texorpdfstring{clear\_facets()}{clear\_facets()}}
+{\footnotesize\ttfamily void clear\+\_\+facets (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{viewer__back_8h_a962f22911094b1c2113f809255066209}{facets\+\_\+t}} $\ast$}]{ff }\end{DoxyParamCaption})}
+
+
+
+Освобождение памяти, выделенной для структуры граней. 
+
+Очистка структуры facets\+\_\+t.
+
+
+\begin{DoxyParams}{Parameters}
+{\em ff} & Указатель на структуру facets\+\_\+t. \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{viewer__back_8c_ad4b05584aa5a1fd434ac6fc993605c09}\label{viewer__back_8c_ad4b05584aa5a1fd434ac6fc993605c09}} 
+\index{viewer\_back.c@{viewer\_back.c}!clear\_vertex@{clear\_vertex}}
+\index{clear\_vertex@{clear\_vertex}!viewer\_back.c@{viewer\_back.c}}
+\doxysubsubsection{\texorpdfstring{clear\_vertex()}{clear\_vertex()}}
+{\footnotesize\ttfamily void clear\+\_\+vertex (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{viewer__back_8h_ae063168c61ca691d48441e61cb5f3b95}{vertexes\+\_\+t}} $\ast$}]{vv }\end{DoxyParamCaption})}
+
+
+
+Освобождение памяти, выделенной для структуры вершин. 
+
+Очистка структуры vertexes\+\_\+t.
+
+
+\begin{DoxyParams}{Parameters}
+{\em vv} & Указатель на структуру vertexes\+\_\+t. \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{viewer__back_8c_a58c3a8a45927bd0a2c93d6298c60992c}\label{viewer__back_8c_a58c3a8a45927bd0a2c93d6298c60992c}} 
+\index{viewer\_back.c@{viewer\_back.c}!convert\_string\_to\_number@{convert\_string\_to\_number}}
+\index{convert\_string\_to\_number@{convert\_string\_to\_number}!viewer\_back.c@{viewer\_back.c}}
+\doxysubsubsection{\texorpdfstring{convert\_string\_to\_number()}{convert\_string\_to\_number()}}
+{\footnotesize\ttfamily void convert\+\_\+string\+\_\+to\+\_\+number (\begin{DoxyParamCaption}\item[{char}]{str\mbox{[}$\,$\mbox{]},  }\item[{int $\ast$}]{pos,  }\item[{char}]{ans\mbox{[}$\,$\mbox{]} }\end{DoxyParamCaption})}
+
+
+
+Преобразование строки в числовое значение. 
+
+Функция для преобразования строки в число.
+
+Эта функция анализирует строку и извлекает из нее число, обновляя позицию в строке, где произошло завершение анализа.
+
+
+\begin{DoxyParams}{Parameters}
+{\em str} & Входная строка. \\
+\hline
+{\em pos} & Указатель на текущую позицию в строке. Обновляется до следующего символа после анализа числа. \\
+\hline
+{\em ans} & Массив символов для сохранения извлеченного числа в виде строки. \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{viewer__back_8c_a5017f44f3f74d9c20d50712dd78d85ec}\label{viewer__back_8c_a5017f44f3f74d9c20d50712dd78d85ec}} 
+\index{viewer\_back.c@{viewer\_back.c}!get\_cnt\_char\_obj@{get\_cnt\_char\_obj}}
+\index{get\_cnt\_char\_obj@{get\_cnt\_char\_obj}!viewer\_back.c@{viewer\_back.c}}
+\doxysubsubsection{\texorpdfstring{get\_cnt\_char\_obj()}{get\_cnt\_char\_obj()}}
+{\footnotesize\ttfamily int get\+\_\+cnt\+\_\+char\+\_\+obj (\begin{DoxyParamCaption}\item[{char $\ast$}]{path,  }\item[{char}]{c }\end{DoxyParamCaption})}
+
+
+
+Получение количества символов заданного типа в файле. 
+
+Функция для получения количества определенных символов в файле.
+
+Эта функция подсчитывает вхождения символа, за которым следует пробел (\textquotesingle{} \textquotesingle{}), в каждой строке файла.
+
+
+\begin{DoxyParams}{Parameters}
+{\em path} & Путь к файлу. \\
+\hline
+{\em c} & Искомый символ. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Количество вхождений символа c. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{viewer__back_8c_a783521bda89ee58040514405422a943a}\label{viewer__back_8c_a783521bda89ee58040514405422a943a}} 
+\index{viewer\_back.c@{viewer\_back.c}!get\_cnt\_num\_in\_line\_obj@{get\_cnt\_num\_in\_line\_obj}}
+\index{get\_cnt\_num\_in\_line\_obj@{get\_cnt\_num\_in\_line\_obj}!viewer\_back.c@{viewer\_back.c}}
+\doxysubsubsection{\texorpdfstring{get\_cnt\_num\_in\_line\_obj()}{get\_cnt\_num\_in\_line\_obj()}}
+{\footnotesize\ttfamily int get\+\_\+cnt\+\_\+num\+\_\+in\+\_\+line\+\_\+obj (\begin{DoxyParamCaption}\item[{char $\ast$}]{path,  }\item[{char}]{c }\end{DoxyParamCaption})}
+
+
+
+Получение количества чисел в строке файла. 
+
+Функция для получения количества чисел в строке файла.
+
+Эта функция подсчитывает количество чисел в каждой строке файла, начиная с символа c, за которым следует пробел (\textquotesingle{} \textquotesingle{}).
+
+
+\begin{DoxyParams}{Parameters}
+{\em path} & Путь к файлу. \\
+\hline
+{\em c} & Символ, с которого начинается строка с числами. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Количество чисел в строках файла. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{viewer__back_8c_a0b2816cd51c21247480398e53c599bdf}\label{viewer__back_8c_a0b2816cd51c21247480398e53c599bdf}} 
+\index{viewer\_back.c@{viewer\_back.c}!init\_facets@{init\_facets}}
+\index{init\_facets@{init\_facets}!viewer\_back.c@{viewer\_back.c}}
+\doxysubsubsection{\texorpdfstring{init\_facets()}{init\_facets()}}
+{\footnotesize\ttfamily void init\+\_\+facets (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{viewer__back_8h_a962f22911094b1c2113f809255066209}{facets\+\_\+t}} $\ast$}]{ff,  }\item[{int}]{cnt\+\_\+l\+\_\+f }\end{DoxyParamCaption})}
+
+
+
+Инициализация структуры граней. 
+
+Инициализация структуры facets\+\_\+t.
+
+
+\begin{DoxyParams}{Parameters}
+{\em ff} & Указатель на структуру facets\+\_\+t. \\
+\hline
+{\em cnt\+\_\+l\+\_\+f} & Количество граней. \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{viewer__back_8c_ad878762be93a98c0c4c24c43f45f56bf}\label{viewer__back_8c_ad878762be93a98c0c4c24c43f45f56bf}} 
+\index{viewer\_back.c@{viewer\_back.c}!init\_vertex@{init\_vertex}}
+\index{init\_vertex@{init\_vertex}!viewer\_back.c@{viewer\_back.c}}
+\doxysubsubsection{\texorpdfstring{init\_vertex()}{init\_vertex()}}
+{\footnotesize\ttfamily void init\+\_\+vertex (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{viewer__back_8h_ae063168c61ca691d48441e61cb5f3b95}{vertexes\+\_\+t}} $\ast$}]{vv,  }\item[{int}]{cnt\+\_\+v }\end{DoxyParamCaption})}
+
+
+
+Инициализация структуры вершин. 
+
+Инициализация структуры vertexes\+\_\+t.
+
+
+\begin{DoxyParams}{Parameters}
+{\em vv} & Указатель на структуру vertexes\+\_\+t. \\
+\hline
+{\em cnt\+\_\+v} & Количество вершин. \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{viewer__back_8c_a5d123eae61d07b5f9a37d3b7f83eec41}\label{viewer__back_8c_a5d123eae61d07b5f9a37d3b7f83eec41}} 
+\index{viewer\_back.c@{viewer\_back.c}!isDigit@{isDigit}}
+\index{isDigit@{isDigit}!viewer\_back.c@{viewer\_back.c}}
+\doxysubsubsection{\texorpdfstring{isDigit()}{isDigit()}}
+{\footnotesize\ttfamily int is\+Digit (\begin{DoxyParamCaption}\item[{char}]{c }\end{DoxyParamCaption})}
+
+
+
+Проверка, является ли символ цифрой. 
+
+Функция для проверки, является ли символ цифрой.
+
+
+\begin{DoxyParams}{Parameters}
+{\em c} & Символ для проверки. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+1, если символ является цифрой, 0 в противном случае. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{viewer__back_8c_ab1e87c2d2ca9ba1fcc9676b73b24232e}\label{viewer__back_8c_ab1e87c2d2ca9ba1fcc9676b73b24232e}} 
+\index{viewer\_back.c@{viewer\_back.c}!read\_obj@{read\_obj}}
+\index{read\_obj@{read\_obj}!viewer\_back.c@{viewer\_back.c}}
+\doxysubsubsection{\texorpdfstring{read\_obj()}{read\_obj()}}
+{\footnotesize\ttfamily void read\+\_\+obj (\begin{DoxyParamCaption}\item[{const char $\ast$}]{path,  }\item[{\mbox{\hyperlink{viewer__back_8h_ae063168c61ca691d48441e61cb5f3b95}{vertexes\+\_\+t}} $\ast$}]{vv,  }\item[{\mbox{\hyperlink{viewer__back_8h_a962f22911094b1c2113f809255066209}{facets\+\_\+t}} $\ast$}]{ff }\end{DoxyParamCaption})}
+
+
+
+Чтение данных из файла 3D-\/модели. 
+
+Чтение файла объекта.
+
+
+\begin{DoxyParams}{Parameters}
+{\em path} & Путь к файлу. \\
+\hline
+{\em vv} & Указатель на структуру vertexes\+\_\+t для хранения вершин. \\
+\hline
+{\em ff} & Указатель на структуру facets\+\_\+t для хранения граней. \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{viewer__back_8c_a7db9c8df39fbbe0620435983d1889c5d}\label{viewer__back_8c_a7db9c8df39fbbe0620435983d1889c5d}} 
+\index{viewer\_back.c@{viewer\_back.c}!rotate@{rotate}}
+\index{rotate@{rotate}!viewer\_back.c@{viewer\_back.c}}
+\doxysubsubsection{\texorpdfstring{rotate()}{rotate()}}
+{\footnotesize\ttfamily void rotate (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{viewer__back_8h_ae063168c61ca691d48441e61cb5f3b95}{vertexes\+\_\+t}} $\ast$}]{vv,  }\item[{char}]{axis,  }\item[{float}]{angle }\end{DoxyParamCaption})}
+
+
+
+Поворот вершин модели вокруг заданной оси. 
+
+Поворот объекта вокруг заданной оси.
+
+
+\begin{DoxyParams}{Parameters}
+{\em vv} & Указатель на структуру vertexes\+\_\+t. \\
+\hline
+{\em axis} & Ось вращения (\textquotesingle{}x\textquotesingle{}, \textquotesingle{}y\textquotesingle{} или \textquotesingle{}z\textquotesingle{}). \\
+\hline
+{\em angle} & Угол поворота (в радианах). \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{viewer__back_8c_af1cdb7c7b6db3575bba36dd3f31c4d2b}\label{viewer__back_8c_af1cdb7c7b6db3575bba36dd3f31c4d2b}} 
+\index{viewer\_back.c@{viewer\_back.c}!rotate\_x@{rotate\_x}}
+\index{rotate\_x@{rotate\_x}!viewer\_back.c@{viewer\_back.c}}
+\doxysubsubsection{\texorpdfstring{rotate\_x()}{rotate\_x()}}
+{\footnotesize\ttfamily void rotate\+\_\+x (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{viewer__back_8h_ae063168c61ca691d48441e61cb5f3b95}{vertexes\+\_\+t}} $\ast$}]{vv,  }\item[{float}]{angle }\end{DoxyParamCaption})}
+
+
+
+Поворот вершин модели вокруг оси X. 
+
+Поворот объекта вокруг оси X.
+
+
+\begin{DoxyParams}{Parameters}
+{\em vv} & Указатель на структуру vertexes\+\_\+t. \\
+\hline
+{\em angle} & Угол поворота (в радианах). \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{viewer__back_8c_acb7bfe0656b75f11c596bac8af14149c}\label{viewer__back_8c_acb7bfe0656b75f11c596bac8af14149c}} 
+\index{viewer\_back.c@{viewer\_back.c}!rotate\_y@{rotate\_y}}
+\index{rotate\_y@{rotate\_y}!viewer\_back.c@{viewer\_back.c}}
+\doxysubsubsection{\texorpdfstring{rotate\_y()}{rotate\_y()}}
+{\footnotesize\ttfamily void rotate\+\_\+y (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{viewer__back_8h_ae063168c61ca691d48441e61cb5f3b95}{vertexes\+\_\+t}} $\ast$}]{vv,  }\item[{float}]{angle }\end{DoxyParamCaption})}
+
+
+
+Поворот вершин модели вокруг оси Y. 
+
+Поворот объекта вокруг оси Y.
+
+
+\begin{DoxyParams}{Parameters}
+{\em vv} & Указатель на структуру vertexes\+\_\+t. \\
+\hline
+{\em angle} & Угол поворота (в радианах). \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{viewer__back_8c_a4e7fc7dc296ca5ffd67b43c9ea3f877f}\label{viewer__back_8c_a4e7fc7dc296ca5ffd67b43c9ea3f877f}} 
+\index{viewer\_back.c@{viewer\_back.c}!rotate\_z@{rotate\_z}}
+\index{rotate\_z@{rotate\_z}!viewer\_back.c@{viewer\_back.c}}
+\doxysubsubsection{\texorpdfstring{rotate\_z()}{rotate\_z()}}
+{\footnotesize\ttfamily void rotate\+\_\+z (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{viewer__back_8h_ae063168c61ca691d48441e61cb5f3b95}{vertexes\+\_\+t}} $\ast$}]{vv,  }\item[{float}]{angle }\end{DoxyParamCaption})}
+
+
+
+Поворот вершин модели вокруг оси Z. 
+
+Поворот объекта вокруг оси Z.
+
+
+\begin{DoxyParams}{Parameters}
+{\em vv} & Указатель на структуру vertexes\+\_\+t. \\
+\hline
+{\em angle} & Угол поворота (в радианах). \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{viewer__back_8c_ac390ce4ae20a0fc7bda1de893891e545}\label{viewer__back_8c_ac390ce4ae20a0fc7bda1de893891e545}} 
+\index{viewer\_back.c@{viewer\_back.c}!scale@{scale}}
+\index{scale@{scale}!viewer\_back.c@{viewer\_back.c}}
+\doxysubsubsection{\texorpdfstring{scale()}{scale()}}
+{\footnotesize\ttfamily void scale (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{viewer__back_8h_ae063168c61ca691d48441e61cb5f3b95}{vertexes\+\_\+t}} $\ast$}]{vv,  }\item[{float}]{multiplier }\end{DoxyParamCaption})}
+
+
+
+Масштабирование вершин модели. 
+
+Масштабирование объекта.
+
+
+\begin{DoxyParams}{Parameters}
+{\em vv} & Указатель на структуру vertexes\+\_\+t. \\
+\hline
+{\em multiplier} & Множитель масштабирования. \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{viewer__back_8c_a4f3dfd4bc14e7678199c5aa9f28c195a}\label{viewer__back_8c_a4f3dfd4bc14e7678199c5aa9f28c195a}} 
+\index{viewer\_back.c@{viewer\_back.c}!shift@{shift}}
+\index{shift@{shift}!viewer\_back.c@{viewer\_back.c}}
+\doxysubsubsection{\texorpdfstring{shift()}{shift()}}
+{\footnotesize\ttfamily void shift (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{viewer__back_8h_ae063168c61ca691d48441e61cb5f3b95}{vertexes\+\_\+t}} $\ast$}]{vv,  }\item[{float}]{dx,  }\item[{float}]{dy,  }\item[{float}]{dz }\end{DoxyParamCaption})}
+
+
+
+Сдвиг вершин модели. 
+
+Смещение объекта.
+
+
+\begin{DoxyParams}{Parameters}
+{\em vv} & Указатель на структуру vertexes\+\_\+t. \\
+\hline
+{\em dx} & Смещение по оси X. \\
+\hline
+{\em dy} & Смещение по оси Y. \\
+\hline
+{\em dz} & Смещение по оси Z. \\
+\hline
+\end{DoxyParams}

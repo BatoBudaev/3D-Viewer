@@ -1,0 +1,809 @@
+\hypertarget{gif_8h_source}{}\doxysection{gif.\+h}
+\label{gif_8h_source}\index{QT3DViewer/gif.h@{QT3DViewer/gif.h}}
+\mbox{\hyperlink{gif_8h}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{//}}
+\DoxyCodeLine{00002\ \textcolor{comment}{//\ gif.h}}
+\DoxyCodeLine{00003\ \textcolor{comment}{//\ by\ Charlie\ Tangora}}
+\DoxyCodeLine{00004\ \textcolor{comment}{//\ Public\ domain.}}
+\DoxyCodeLine{00005\ \textcolor{comment}{//\ Email\ me\ :\ ctangora\ -\/at-\/\ gmail\ -\/dot-\/\ com}}
+\DoxyCodeLine{00006\ \textcolor{comment}{//}}
+\DoxyCodeLine{00007\ \textcolor{comment}{//\ This\ file\ offers\ a\ simple,\ very\ limited\ way\ to\ create\ animated\ GIFs\ directly}}
+\DoxyCodeLine{00008\ \textcolor{comment}{//\ in\ code.}}
+\DoxyCodeLine{00009\ \textcolor{comment}{//}}
+\DoxyCodeLine{00010\ \textcolor{comment}{//\ Those\ looking\ for\ particular\ cleverness\ are\ likely\ to\ be\ disappointed;\ it's}}
+\DoxyCodeLine{00011\ \textcolor{comment}{//\ pretty\ much\ a\ straight-\/ahead\ implementation\ of\ the\ GIF\ format\ with\ optional}}
+\DoxyCodeLine{00012\ \textcolor{comment}{//\ Floyd-\/Steinberg\ dithering.\ (It\ does\ at\ least\ use\ delta\ encoding\ -\/\ only\ the}}
+\DoxyCodeLine{00013\ \textcolor{comment}{//\ changed\ portions\ of\ each\ frame\ are\ saved.)}}
+\DoxyCodeLine{00014\ \textcolor{comment}{//}}
+\DoxyCodeLine{00015\ \textcolor{comment}{//\ So\ resulting\ files\ are\ often\ quite\ large.\ The\ hope\ is\ that\ it\ will\ be\ handy}}
+\DoxyCodeLine{00016\ \textcolor{comment}{//\ nonetheless\ as\ a\ quick\ and\ easily-\/integrated\ way\ for\ programs\ to\ spit\ out}}
+\DoxyCodeLine{00017\ \textcolor{comment}{//\ animations.}}
+\DoxyCodeLine{00018\ \textcolor{comment}{//}}
+\DoxyCodeLine{00019\ \textcolor{comment}{//\ Only\ RGBA8\ is\ currently\ supported\ as\ an\ input\ format.\ (The\ alpha\ is\ ignored.)}}
+\DoxyCodeLine{00020\ \textcolor{comment}{//}}
+\DoxyCodeLine{00021\ \textcolor{comment}{//\ If\ capturing\ a\ buffer\ with\ a\ bottom-\/left\ origin\ (such\ as\ OpenGL),\ define}}
+\DoxyCodeLine{00022\ \textcolor{comment}{//\ GIF\_FLIP\_VERT\ to\ automatically\ flip\ the\ buffer\ data\ when\ writing\ the\ image}}
+\DoxyCodeLine{00023\ \textcolor{comment}{//\ (the\ buffer\ itself\ is\ unchanged.}}
+\DoxyCodeLine{00024\ \textcolor{comment}{//}}
+\DoxyCodeLine{00025\ \textcolor{comment}{//\ USAGE:}}
+\DoxyCodeLine{00026\ \textcolor{comment}{//\ Create\ a\ GifWriter\ struct.\ Pass\ it\ to\ GifBegin()\ to\ initialize\ and\ write\ the}}
+\DoxyCodeLine{00027\ \textcolor{comment}{//\ header.\ Pass\ subsequent\ frames\ to\ GifWriteFrame().\ Finally,\ call\ GifEnd()\ to}}
+\DoxyCodeLine{00028\ \textcolor{comment}{//\ close\ the\ file\ handle\ and\ free\ memory.}}
+\DoxyCodeLine{00029\ \textcolor{comment}{//}}
+\DoxyCodeLine{00034\ \textcolor{comment}{}\textcolor{preprocessor}{\#ifndef\ gif\_h}}
+\DoxyCodeLine{00035\ \textcolor{preprocessor}{\#define\ gif\_h}}
+\DoxyCodeLine{00036\ }
+\DoxyCodeLine{00037\ \textcolor{preprocessor}{\#include\ <stdbool.h>}\ \ \textcolor{comment}{//\ for\ bool\ macros}}
+\DoxyCodeLine{00038\ \textcolor{preprocessor}{\#include\ <stdint.h>}\ \ \ \textcolor{comment}{//\ for\ integer\ typedefs}}
+\DoxyCodeLine{00039\ \textcolor{preprocessor}{\#include\ <stdio.h>}\ \ \ \ \textcolor{comment}{//\ for\ FILE*}}
+\DoxyCodeLine{00040\ \textcolor{preprocessor}{\#include\ <string.h>}\ \ \ \textcolor{comment}{//\ for\ memcpy\ and\ bzero}}
+\DoxyCodeLine{00041\ }
+\DoxyCodeLine{00042\ \textcolor{comment}{//\ Define\ these\ macros\ to\ hook\ into\ a\ custom\ memory\ allocator.}}
+\DoxyCodeLine{00043\ \textcolor{comment}{//\ TEMP\_MALLOC\ and\ TEMP\_FREE\ will\ only\ be\ called\ in\ stack\ fashion\ -\/\ frees\ in\ the}}
+\DoxyCodeLine{00044\ \textcolor{comment}{//\ reverse\ order\ of\ mallocs\ and\ any\ temp\ memory\ allocated\ by\ a\ function\ will\ be}}
+\DoxyCodeLine{00045\ \textcolor{comment}{//\ freed\ before\ it\ exits.\ MALLOC\ and\ FREE\ are\ used\ only\ by\ GifBegin\ and\ GifEnd}}
+\DoxyCodeLine{00046\ \textcolor{comment}{//\ respectively\ (to\ allocate\ a\ buffer\ the\ size\ of\ the\ image,\ which\ is\ used\ to}}
+\DoxyCodeLine{00047\ \textcolor{comment}{//\ find\ changed\ pixels\ for\ delta-\/encoding.)}}
+\DoxyCodeLine{00055\ \textcolor{comment}{}\textcolor{preprocessor}{\#ifndef\ GIF\_TEMP\_MALLOC}}
+\DoxyCodeLine{00056\ \textcolor{preprocessor}{\#include\ <stdlib.h>}}
+\DoxyCodeLine{00057\ \textcolor{preprocessor}{\#define\ GIF\_TEMP\_MALLOC\ malloc}}
+\DoxyCodeLine{00058\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00066\ \textcolor{preprocessor}{\#ifndef\ GIF\_TEMP\_FREE}}
+\DoxyCodeLine{00067\ \textcolor{preprocessor}{\#include\ <stdlib.h>}}
+\DoxyCodeLine{00068\ \textcolor{preprocessor}{\#define\ GIF\_TEMP\_FREE\ free}}
+\DoxyCodeLine{00069\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00078\ \textcolor{preprocessor}{\#ifndef\ GIF\_MALLOC}}
+\DoxyCodeLine{00079\ \textcolor{preprocessor}{\#include\ <stdlib.h>}}
+\DoxyCodeLine{00080\ \textcolor{preprocessor}{\#define\ GIF\_MALLOC\ malloc}}
+\DoxyCodeLine{00081\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00082\ }
+\DoxyCodeLine{00090\ \textcolor{preprocessor}{\#ifndef\ GIF\_FREE}}
+\DoxyCodeLine{00091\ \textcolor{preprocessor}{\#include\ <stdlib.h>}}
+\DoxyCodeLine{00092\ \textcolor{preprocessor}{\#define\ GIF\_FREE\ free}}
+\DoxyCodeLine{00093\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00094\ }
+\DoxyCodeLine{00098\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{gif_8h_a3bbc4876f24cc742e2cbb68fa3c88fe9}{kGifTransIndex}}\ =\ 0;}
+\DoxyCodeLine{00099\ }
+\DoxyCodeLine{00104\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\{}
+\DoxyCodeLine{00105\ \ \ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{structGifPalette_a731b991a07d514c890cd3d6c9a8e51f3}{bitDepth}};}
+\DoxyCodeLine{00106\ }
+\DoxyCodeLine{00107\ \ \ uint8\_t\ r[256];}
+\DoxyCodeLine{00108\ \ \ uint8\_t\ g[256];}
+\DoxyCodeLine{00109\ \ \ uint8\_t\ b[256];}
+\DoxyCodeLine{00110\ }
+\DoxyCodeLine{00111\ \ \ \textcolor{comment}{//\ k-\/d\ tree\ over\ RGB\ space,\ organized\ in\ heap\ fashion}}
+\DoxyCodeLine{00112\ \ \ \textcolor{comment}{//\ i.e.\ left\ child\ of\ node\ i\ is\ node\ i*2,\ right\ child\ is\ node\ i*2+1}}
+\DoxyCodeLine{00113\ \ \ \textcolor{comment}{//\ nodes\ 256-\/511\ are\ implicitly\ the\ leaves,\ containing\ a\ color}}
+\DoxyCodeLine{00114\ \ \ uint8\_t\ treeSplitElt[256];}
+\DoxyCodeLine{00115\ \ \ uint8\_t\ treeSplit[256];}
+\DoxyCodeLine{00116\ \}\ \mbox{\hyperlink{structGifPalette}{GifPalette}};}
+\DoxyCodeLine{00117\ }
+\DoxyCodeLine{00118\ \textcolor{comment}{//\ max,\ min,\ and\ abs\ functions}}
+\DoxyCodeLine{00126\ \textcolor{comment}{}\textcolor{keywordtype}{int}\ \mbox{\hyperlink{gif_8h_abec89660e26d5d306a68352215b9a0be}{GifIMax}}(\textcolor{keywordtype}{int}\ l,\ \textcolor{keywordtype}{int}\ r)\ \{\ \textcolor{keywordflow}{return}\ l\ >\ r\ ?\ l\ :\ r;\ \}}
+\DoxyCodeLine{00134\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{gif_8h_ab9dd9d911741bf4964afc6365ee09314}{GifIMin}}(\textcolor{keywordtype}{int}\ l,\ \textcolor{keywordtype}{int}\ r)\ \{\ \textcolor{keywordflow}{return}\ l\ <\ r\ ?\ l\ :\ r;\ \}}
+\DoxyCodeLine{00141\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{gif_8h_a3f47fdcc507db606e3817489e15389bf}{GifIAbs}}(\textcolor{keywordtype}{int}\ i)\ \{\ \textcolor{keywordflow}{return}\ i\ <\ 0\ ?\ -\/i\ :\ i;\ \}}
+\DoxyCodeLine{00142\ }
+\DoxyCodeLine{00143\ \textcolor{comment}{//\ walks\ the\ k-\/d\ tree\ to\ pick\ the\ palette\ entry\ for\ a\ desired\ color.}}
+\DoxyCodeLine{00144\ \textcolor{comment}{//\ Takes\ as\ in/out\ parameters\ the\ current\ best\ color\ and\ its\ error\ -\/}}
+\DoxyCodeLine{00145\ \textcolor{comment}{//\ only\ changes\ them\ if\ it\ finds\ a\ better\ color\ in\ its\ subtree.}}
+\DoxyCodeLine{00146\ \textcolor{comment}{//\ this\ is\ the\ major\ hotspot\ in\ the\ code\ at\ the\ moment.}}
+\DoxyCodeLine{00147\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{gif_8h_a17526c4fd7bdc86c779c6253279abee5}{GifGetClosestPaletteColor}}(\mbox{\hyperlink{structGifPalette}{GifPalette}}*\ pPal,\ \textcolor{keywordtype}{int}\ r,\ \textcolor{keywordtype}{int}\ g,\ \textcolor{keywordtype}{int}\ b,}
+\DoxyCodeLine{00148\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}*\ bestInd,\ \textcolor{keywordtype}{int}*\ bestDiff,\ \textcolor{keywordtype}{int}\ treeRoot)\ \{}
+\DoxyCodeLine{00149\ \ \ \textcolor{comment}{//\ base\ case,\ reached\ the\ bottom\ of\ the\ tree}}
+\DoxyCodeLine{00150\ \ \ \textcolor{keywordflow}{if}\ (treeRoot\ >\ (1\ <<\ pPal-\/>\mbox{\hyperlink{structGifPalette_a731b991a07d514c890cd3d6c9a8e51f3}{bitDepth}})\ -\/\ 1)\ \{}
+\DoxyCodeLine{00151\ \ \ \ \ \textcolor{keywordtype}{int}\ ind\ =\ treeRoot\ -\/\ (1\ <<\ pPal-\/>\mbox{\hyperlink{structGifPalette_a731b991a07d514c890cd3d6c9a8e51f3}{bitDepth}});}
+\DoxyCodeLine{00152\ \ \ \ \ \textcolor{keywordflow}{if}\ (ind\ ==\ \mbox{\hyperlink{gif_8h_a3bbc4876f24cc742e2cbb68fa3c88fe9}{kGifTransIndex}})\ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{00153\ }
+\DoxyCodeLine{00154\ \ \ \ \ \textcolor{comment}{//\ check\ whether\ this\ color\ is\ better\ than\ the\ current\ winner}}
+\DoxyCodeLine{00155\ \ \ \ \ \textcolor{keywordtype}{int}\ r\_err\ =\ r\ -\/\ ((int32\_t)pPal-\/>\mbox{\hyperlink{structGifPalette_a614dead8bc7d3d8f4f24205f85a8b91b}{r}}[ind]);}
+\DoxyCodeLine{00156\ \ \ \ \ \textcolor{keywordtype}{int}\ g\_err\ =\ g\ -\/\ ((int32\_t)pPal-\/>\mbox{\hyperlink{structGifPalette_a7c6b513664877530d38f31a32899bec6}{g}}[ind]);}
+\DoxyCodeLine{00157\ \ \ \ \ \textcolor{keywordtype}{int}\ b\_err\ =\ b\ -\/\ ((int32\_t)pPal-\/>\mbox{\hyperlink{structGifPalette_a30c74a5ef1182b42a0fc290bd05eff51}{b}}[ind]);}
+\DoxyCodeLine{00158\ \ \ \ \ \textcolor{keywordtype}{int}\ diff\ =\ \mbox{\hyperlink{gif_8h_a3f47fdcc507db606e3817489e15389bf}{GifIAbs}}(r\_err)\ +\ \mbox{\hyperlink{gif_8h_a3f47fdcc507db606e3817489e15389bf}{GifIAbs}}(g\_err)\ +\ \mbox{\hyperlink{gif_8h_a3f47fdcc507db606e3817489e15389bf}{GifIAbs}}(b\_err);}
+\DoxyCodeLine{00159\ }
+\DoxyCodeLine{00160\ \ \ \ \ \textcolor{keywordflow}{if}\ (diff\ <\ *bestDiff)\ \{}
+\DoxyCodeLine{00161\ \ \ \ \ \ \ *bestInd\ =\ ind;}
+\DoxyCodeLine{00162\ \ \ \ \ \ \ *bestDiff\ =\ diff;}
+\DoxyCodeLine{00163\ \ \ \ \ \}}
+\DoxyCodeLine{00164\ }
+\DoxyCodeLine{00165\ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{00166\ \ \ \}}
+\DoxyCodeLine{00167\ }
+\DoxyCodeLine{00168\ \ \ \textcolor{comment}{//\ take\ the\ appropriate\ color\ (r,\ g,\ or\ b)\ for\ this\ node\ of\ the\ k-\/d\ tree}}
+\DoxyCodeLine{00169\ \ \ \textcolor{keywordtype}{int}\ comps[3];}
+\DoxyCodeLine{00170\ \ \ comps[0]\ =\ r;}
+\DoxyCodeLine{00171\ \ \ comps[1]\ =\ g;}
+\DoxyCodeLine{00172\ \ \ comps[2]\ =\ b;}
+\DoxyCodeLine{00173\ \ \ \textcolor{keywordtype}{int}\ splitComp\ =\ comps[pPal-\/>\mbox{\hyperlink{structGifPalette_a333c9b8872127221ca62d41413f20638}{treeSplitElt}}[treeRoot]];}
+\DoxyCodeLine{00174\ }
+\DoxyCodeLine{00175\ \ \ \textcolor{keywordtype}{int}\ splitPos\ =\ pPal-\/>\mbox{\hyperlink{structGifPalette_abb62e3544c63e7ef418ead69b2c17b61}{treeSplit}}[treeRoot];}
+\DoxyCodeLine{00176\ \ \ \textcolor{keywordflow}{if}\ (splitPos\ >\ splitComp)\ \{}
+\DoxyCodeLine{00177\ \ \ \ \ \textcolor{comment}{//\ check\ the\ left\ subtree}}
+\DoxyCodeLine{00178\ \ \ \ \ \mbox{\hyperlink{gif_8h_a17526c4fd7bdc86c779c6253279abee5}{GifGetClosestPaletteColor}}(pPal,\ r,\ g,\ b,\ bestInd,\ bestDiff,\ treeRoot\ *\ 2);}
+\DoxyCodeLine{00179\ \ \ \ \ \textcolor{keywordflow}{if}\ (*bestDiff\ >\ splitPos\ -\/\ splitComp)\ \{}
+\DoxyCodeLine{00180\ \ \ \ \ \ \ \textcolor{comment}{//\ cannot\ prove\ there's\ not\ a\ better\ value\ in\ the\ right\ subtree,\ check}}
+\DoxyCodeLine{00181\ \ \ \ \ \ \ \textcolor{comment}{//\ that\ too}}
+\DoxyCodeLine{00182\ \ \ \ \ \ \ \mbox{\hyperlink{gif_8h_a17526c4fd7bdc86c779c6253279abee5}{GifGetClosestPaletteColor}}(pPal,\ r,\ g,\ b,\ bestInd,\ bestDiff,}
+\DoxyCodeLine{00183\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ treeRoot\ *\ 2\ +\ 1);}
+\DoxyCodeLine{00184\ \ \ \ \ \}}
+\DoxyCodeLine{00185\ \ \ \}\ \textcolor{keywordflow}{else}\ \{}
+\DoxyCodeLine{00186\ \ \ \ \ \mbox{\hyperlink{gif_8h_a17526c4fd7bdc86c779c6253279abee5}{GifGetClosestPaletteColor}}(pPal,\ r,\ g,\ b,\ bestInd,\ bestDiff,}
+\DoxyCodeLine{00187\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ treeRoot\ *\ 2\ +\ 1);}
+\DoxyCodeLine{00188\ \ \ \ \ \textcolor{keywordflow}{if}\ (*bestDiff\ >\ splitComp\ -\/\ splitPos)\ \{}
+\DoxyCodeLine{00189\ \ \ \ \ \ \ \mbox{\hyperlink{gif_8h_a17526c4fd7bdc86c779c6253279abee5}{GifGetClosestPaletteColor}}(pPal,\ r,\ g,\ b,\ bestInd,\ bestDiff,\ treeRoot\ *\ 2);}
+\DoxyCodeLine{00190\ \ \ \ \ \}}
+\DoxyCodeLine{00191\ \ \ \}}
+\DoxyCodeLine{00192\ \}}
+\DoxyCodeLine{00193\ }
+\DoxyCodeLine{00194\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{gif_8h_a6df6365a4dbdd83db88521f7159af7f7}{GifSwapPixels}}(uint8\_t*\ image,\ \textcolor{keywordtype}{int}\ pixA,\ \textcolor{keywordtype}{int}\ pixB)\ \{}
+\DoxyCodeLine{00195\ \ \ uint8\_t\ rA\ =\ image[pixA\ *\ 4];}
+\DoxyCodeLine{00196\ \ \ uint8\_t\ gA\ =\ image[pixA\ *\ 4\ +\ 1];}
+\DoxyCodeLine{00197\ \ \ uint8\_t\ bA\ =\ image[pixA\ *\ 4\ +\ 2];}
+\DoxyCodeLine{00198\ \ \ uint8\_t\ aA\ =\ image[pixA\ *\ 4\ +\ 3];}
+\DoxyCodeLine{00199\ }
+\DoxyCodeLine{00200\ \ \ uint8\_t\ rB\ =\ image[pixB\ *\ 4];}
+\DoxyCodeLine{00201\ \ \ uint8\_t\ gB\ =\ image[pixB\ *\ 4\ +\ 1];}
+\DoxyCodeLine{00202\ \ \ uint8\_t\ bB\ =\ image[pixB\ *\ 4\ +\ 2];}
+\DoxyCodeLine{00203\ \ \ uint8\_t\ aB\ =\ image[pixA\ *\ 4\ +\ 3];}
+\DoxyCodeLine{00204\ }
+\DoxyCodeLine{00205\ \ \ image[pixA\ *\ 4]\ =\ rB;}
+\DoxyCodeLine{00206\ \ \ image[pixA\ *\ 4\ +\ 1]\ =\ gB;}
+\DoxyCodeLine{00207\ \ \ image[pixA\ *\ 4\ +\ 2]\ =\ bB;}
+\DoxyCodeLine{00208\ \ \ image[pixA\ *\ 4\ +\ 3]\ =\ aB;}
+\DoxyCodeLine{00209\ }
+\DoxyCodeLine{00210\ \ \ image[pixB\ *\ 4]\ =\ rA;}
+\DoxyCodeLine{00211\ \ \ image[pixB\ *\ 4\ +\ 1]\ =\ gA;}
+\DoxyCodeLine{00212\ \ \ image[pixB\ *\ 4\ +\ 2]\ =\ bA;}
+\DoxyCodeLine{00213\ \ \ image[pixB\ *\ 4\ +\ 3]\ =\ aA;}
+\DoxyCodeLine{00214\ \}}
+\DoxyCodeLine{00215\ }
+\DoxyCodeLine{00216\ \textcolor{comment}{//\ just\ the\ partition\ operation\ from\ quicksort}}
+\DoxyCodeLine{00217\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{gif_8h_a5d40946fe75133f3be72b4e4d096b776}{GifPartition}}(uint8\_t*\ image,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ left,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ right,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ elt,}
+\DoxyCodeLine{00218\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ pivotIndex)\ \{}
+\DoxyCodeLine{00219\ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ pivotValue\ =\ image[(pivotIndex)*4\ +\ elt];}
+\DoxyCodeLine{00220\ \ \ \mbox{\hyperlink{gif_8h_a6df6365a4dbdd83db88521f7159af7f7}{GifSwapPixels}}(image,\ pivotIndex,\ right\ -\/\ 1);}
+\DoxyCodeLine{00221\ \ \ \textcolor{keywordtype}{int}\ storeIndex\ =\ left;}
+\DoxyCodeLine{00222\ \ \ \textcolor{keywordtype}{bool}\ split\ =\ 0;}
+\DoxyCodeLine{00223\ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ ii\ =\ left;\ ii\ <\ right\ -\/\ 1;\ ++ii)\ \{}
+\DoxyCodeLine{00224\ \ \ \ \ \textcolor{keywordtype}{int}\ arrayVal\ =\ image[ii\ *\ 4\ +\ elt];}
+\DoxyCodeLine{00225\ \ \ \ \ \textcolor{keywordflow}{if}\ (arrayVal\ <\ pivotValue)\ \{}
+\DoxyCodeLine{00226\ \ \ \ \ \ \ \mbox{\hyperlink{gif_8h_a6df6365a4dbdd83db88521f7159af7f7}{GifSwapPixels}}(image,\ ii,\ storeIndex);}
+\DoxyCodeLine{00227\ \ \ \ \ \ \ ++storeIndex;}
+\DoxyCodeLine{00228\ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \textcolor{keywordflow}{if}\ (arrayVal\ ==\ pivotValue)\ \{}
+\DoxyCodeLine{00229\ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (split)\ \{}
+\DoxyCodeLine{00230\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{gif_8h_a6df6365a4dbdd83db88521f7159af7f7}{GifSwapPixels}}(image,\ ii,\ storeIndex);}
+\DoxyCodeLine{00231\ \ \ \ \ \ \ \ \ ++storeIndex;}
+\DoxyCodeLine{00232\ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00233\ \ \ \ \ \ \ split\ =\ !split;}
+\DoxyCodeLine{00234\ \ \ \ \ \}}
+\DoxyCodeLine{00235\ \ \ \}}
+\DoxyCodeLine{00236\ \ \ \mbox{\hyperlink{gif_8h_a6df6365a4dbdd83db88521f7159af7f7}{GifSwapPixels}}(image,\ storeIndex,\ right\ -\/\ 1);}
+\DoxyCodeLine{00237\ \ \ \textcolor{keywordflow}{return}\ storeIndex;}
+\DoxyCodeLine{00238\ \}}
+\DoxyCodeLine{00239\ }
+\DoxyCodeLine{00240\ \textcolor{comment}{//\ Perform\ an\ incomplete\ sort,\ finding\ all\ elements\ above\ and\ below\ the\ desired}}
+\DoxyCodeLine{00241\ \textcolor{comment}{//\ median}}
+\DoxyCodeLine{00242\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{gif_8h_aa3789c1923f40cb85ccccca4fcdae41c}{GifPartitionByMedian}}(uint8\_t*\ image,\ \textcolor{keywordtype}{int}\ left,\ \textcolor{keywordtype}{int}\ right,\ \textcolor{keywordtype}{int}\ com,}
+\DoxyCodeLine{00243\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ neededCenter)\ \{}
+\DoxyCodeLine{00244\ \ \ \textcolor{keywordflow}{if}\ (left\ <\ right\ -\/\ 1)\ \{}
+\DoxyCodeLine{00245\ \ \ \ \ \textcolor{keywordtype}{int}\ pivotIndex\ =\ left\ +\ (right\ -\/\ left)\ /\ 2;}
+\DoxyCodeLine{00246\ }
+\DoxyCodeLine{00247\ \ \ \ \ pivotIndex\ =\ \mbox{\hyperlink{gif_8h_a5d40946fe75133f3be72b4e4d096b776}{GifPartition}}(image,\ left,\ right,\ com,\ pivotIndex);}
+\DoxyCodeLine{00248\ }
+\DoxyCodeLine{00249\ \ \ \ \ \textcolor{comment}{//\ Only\ "{}sort"{}\ the\ section\ of\ the\ array\ that\ contains\ the\ median}}
+\DoxyCodeLine{00250\ \ \ \ \ \textcolor{keywordflow}{if}\ (pivotIndex\ >\ neededCenter)}
+\DoxyCodeLine{00251\ \ \ \ \ \ \ \mbox{\hyperlink{gif_8h_aa3789c1923f40cb85ccccca4fcdae41c}{GifPartitionByMedian}}(image,\ left,\ pivotIndex,\ com,\ neededCenter);}
+\DoxyCodeLine{00252\ }
+\DoxyCodeLine{00253\ \ \ \ \ \textcolor{keywordflow}{if}\ (pivotIndex\ <\ neededCenter)}
+\DoxyCodeLine{00254\ \ \ \ \ \ \ \mbox{\hyperlink{gif_8h_aa3789c1923f40cb85ccccca4fcdae41c}{GifPartitionByMedian}}(image,\ pivotIndex\ +\ 1,\ right,\ com,\ neededCenter);}
+\DoxyCodeLine{00255\ \ \ \}}
+\DoxyCodeLine{00256\ \}}
+\DoxyCodeLine{00257\ }
+\DoxyCodeLine{00258\ \textcolor{comment}{//\ Builds\ a\ palette\ by\ creating\ a\ balanced\ k-\/d\ tree\ of\ all\ pixels\ in\ the\ image}}
+\DoxyCodeLine{00259\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{gif_8h_ace441d978463380721538e95c029ee71}{GifSplitPalette}}(uint8\_t*\ image,\ \textcolor{keywordtype}{int}\ numPixels,\ \textcolor{keywordtype}{int}\ firstElt,\ \textcolor{keywordtype}{int}\ lastElt,}
+\DoxyCodeLine{00260\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ splitElt,\ \textcolor{keywordtype}{int}\ splitDist,\ \textcolor{keywordtype}{int}\ treeNode,}
+\DoxyCodeLine{00261\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ buildForDither,\ \mbox{\hyperlink{structGifPalette}{GifPalette}}*\ pal)\ \{}
+\DoxyCodeLine{00262\ \ \ \textcolor{keywordflow}{if}\ (lastElt\ <=\ firstElt\ ||\ numPixels\ ==\ 0)\ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{00263\ }
+\DoxyCodeLine{00264\ \ \ \textcolor{comment}{//\ base\ case,\ bottom\ of\ the\ tree}}
+\DoxyCodeLine{00265\ \ \ \textcolor{keywordflow}{if}\ (lastElt\ ==\ firstElt\ +\ 1)\ \{}
+\DoxyCodeLine{00266\ \ \ \ \ \textcolor{keywordflow}{if}\ (buildForDither)\ \{}
+\DoxyCodeLine{00267\ \ \ \ \ \ \ \textcolor{comment}{//\ Dithering\ needs\ at\ least\ one\ color\ as\ dark\ as\ anything}}
+\DoxyCodeLine{00268\ \ \ \ \ \ \ \textcolor{comment}{//\ in\ the\ image\ and\ at\ least\ one\ brightest\ color\ -\/}}
+\DoxyCodeLine{00269\ \ \ \ \ \ \ \textcolor{comment}{//\ otherwise\ it\ builds\ up\ error\ and\ produces\ strange\ artifacts}}
+\DoxyCodeLine{00270\ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (firstElt\ ==\ 1)\ \{}
+\DoxyCodeLine{00271\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ special\ case:\ the\ darkest\ color\ in\ the\ image}}
+\DoxyCodeLine{00272\ \ \ \ \ \ \ \ \ uint32\_t\ r\ =\ 255,\ g\ =\ 255,\ b\ =\ 255;}
+\DoxyCodeLine{00273\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ ii\ =\ 0;\ ii\ <\ numPixels;\ ++ii)\ \{}
+\DoxyCodeLine{00274\ \ \ \ \ \ \ \ \ \ \ r\ =\ (uint32\_t)\mbox{\hyperlink{gif_8h_ab9dd9d911741bf4964afc6365ee09314}{GifIMin}}((int32\_t)r,\ image[ii\ *\ 4\ +\ 0]);}
+\DoxyCodeLine{00275\ \ \ \ \ \ \ \ \ \ \ g\ =\ (uint32\_t)\mbox{\hyperlink{gif_8h_ab9dd9d911741bf4964afc6365ee09314}{GifIMin}}((int32\_t)g,\ image[ii\ *\ 4\ +\ 1]);}
+\DoxyCodeLine{00276\ \ \ \ \ \ \ \ \ \ \ b\ =\ (uint32\_t)\mbox{\hyperlink{gif_8h_ab9dd9d911741bf4964afc6365ee09314}{GifIMin}}((int32\_t)b,\ image[ii\ *\ 4\ +\ 2]);}
+\DoxyCodeLine{00277\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00278\ }
+\DoxyCodeLine{00279\ \ \ \ \ \ \ \ \ pal-\/>\mbox{\hyperlink{structGifPalette_a614dead8bc7d3d8f4f24205f85a8b91b}{r}}[firstElt]\ =\ (uint8\_t)r;}
+\DoxyCodeLine{00280\ \ \ \ \ \ \ \ \ pal-\/>\mbox{\hyperlink{structGifPalette_a7c6b513664877530d38f31a32899bec6}{g}}[firstElt]\ =\ (uint8\_t)g;}
+\DoxyCodeLine{00281\ \ \ \ \ \ \ \ \ pal-\/>\mbox{\hyperlink{structGifPalette_a30c74a5ef1182b42a0fc290bd05eff51}{b}}[firstElt]\ =\ (uint8\_t)b;}
+\DoxyCodeLine{00282\ }
+\DoxyCodeLine{00283\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{00284\ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00285\ }
+\DoxyCodeLine{00286\ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (firstElt\ ==\ (1\ <<\ pal-\/>\mbox{\hyperlink{structGifPalette_a731b991a07d514c890cd3d6c9a8e51f3}{bitDepth}})\ -\/\ 1)\ \{}
+\DoxyCodeLine{00287\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ special\ case:\ the\ lightest\ color\ in\ the\ image}}
+\DoxyCodeLine{00288\ \ \ \ \ \ \ \ \ uint32\_t\ r\ =\ 0,\ g\ =\ 0,\ b\ =\ 0;}
+\DoxyCodeLine{00289\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ ii\ =\ 0;\ ii\ <\ numPixels;\ ++ii)\ \{}
+\DoxyCodeLine{00290\ \ \ \ \ \ \ \ \ \ \ r\ =\ (uint32\_t)\mbox{\hyperlink{gif_8h_abec89660e26d5d306a68352215b9a0be}{GifIMax}}((int32\_t)r,\ image[ii\ *\ 4\ +\ 0]);}
+\DoxyCodeLine{00291\ \ \ \ \ \ \ \ \ \ \ g\ =\ (uint32\_t)\mbox{\hyperlink{gif_8h_abec89660e26d5d306a68352215b9a0be}{GifIMax}}((int32\_t)g,\ image[ii\ *\ 4\ +\ 1]);}
+\DoxyCodeLine{00292\ \ \ \ \ \ \ \ \ \ \ b\ =\ (uint32\_t)\mbox{\hyperlink{gif_8h_abec89660e26d5d306a68352215b9a0be}{GifIMax}}((int32\_t)b,\ image[ii\ *\ 4\ +\ 2]);}
+\DoxyCodeLine{00293\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00294\ }
+\DoxyCodeLine{00295\ \ \ \ \ \ \ \ \ pal-\/>\mbox{\hyperlink{structGifPalette_a614dead8bc7d3d8f4f24205f85a8b91b}{r}}[firstElt]\ =\ (uint8\_t)r;}
+\DoxyCodeLine{00296\ \ \ \ \ \ \ \ \ pal-\/>\mbox{\hyperlink{structGifPalette_a7c6b513664877530d38f31a32899bec6}{g}}[firstElt]\ =\ (uint8\_t)g;}
+\DoxyCodeLine{00297\ \ \ \ \ \ \ \ \ pal-\/>\mbox{\hyperlink{structGifPalette_a30c74a5ef1182b42a0fc290bd05eff51}{b}}[firstElt]\ =\ (uint8\_t)b;}
+\DoxyCodeLine{00298\ }
+\DoxyCodeLine{00299\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{00300\ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00301\ \ \ \ \ \}}
+\DoxyCodeLine{00302\ }
+\DoxyCodeLine{00303\ \ \ \ \ \textcolor{comment}{//\ otherwise,\ take\ the\ average\ of\ all\ colors\ in\ this\ subcube}}
+\DoxyCodeLine{00304\ \ \ \ \ uint64\_t\ r\ =\ 0,\ g\ =\ 0,\ b\ =\ 0;}
+\DoxyCodeLine{00305\ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ ii\ =\ 0;\ ii\ <\ numPixels;\ ++ii)\ \{}
+\DoxyCodeLine{00306\ \ \ \ \ \ \ r\ +=\ image[ii\ *\ 4\ +\ 0];}
+\DoxyCodeLine{00307\ \ \ \ \ \ \ g\ +=\ image[ii\ *\ 4\ +\ 1];}
+\DoxyCodeLine{00308\ \ \ \ \ \ \ b\ +=\ image[ii\ *\ 4\ +\ 2];}
+\DoxyCodeLine{00309\ \ \ \ \ \}}
+\DoxyCodeLine{00310\ }
+\DoxyCodeLine{00311\ \ \ \ \ r\ +=\ (uint64\_t)numPixels\ /\ 2;\ \ \textcolor{comment}{//\ round\ to\ nearest}}
+\DoxyCodeLine{00312\ \ \ \ \ g\ +=\ (uint64\_t)numPixels\ /\ 2;}
+\DoxyCodeLine{00313\ \ \ \ \ b\ +=\ (uint64\_t)numPixels\ /\ 2;}
+\DoxyCodeLine{00314\ }
+\DoxyCodeLine{00315\ \ \ \ \ r\ /=\ (uint64\_t)numPixels;}
+\DoxyCodeLine{00316\ \ \ \ \ g\ /=\ (uint64\_t)numPixels;}
+\DoxyCodeLine{00317\ \ \ \ \ b\ /=\ (uint64\_t)numPixels;}
+\DoxyCodeLine{00318\ }
+\DoxyCodeLine{00319\ \ \ \ \ pal-\/>\mbox{\hyperlink{structGifPalette_a614dead8bc7d3d8f4f24205f85a8b91b}{r}}[firstElt]\ =\ (uint8\_t)r;}
+\DoxyCodeLine{00320\ \ \ \ \ pal-\/>\mbox{\hyperlink{structGifPalette_a7c6b513664877530d38f31a32899bec6}{g}}[firstElt]\ =\ (uint8\_t)g;}
+\DoxyCodeLine{00321\ \ \ \ \ pal-\/>\mbox{\hyperlink{structGifPalette_a30c74a5ef1182b42a0fc290bd05eff51}{b}}[firstElt]\ =\ (uint8\_t)b;}
+\DoxyCodeLine{00322\ }
+\DoxyCodeLine{00323\ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{00324\ \ \ \}}
+\DoxyCodeLine{00325\ }
+\DoxyCodeLine{00326\ \ \ \textcolor{comment}{//\ Find\ the\ axis\ with\ the\ largest\ range}}
+\DoxyCodeLine{00327\ \ \ \textcolor{keywordtype}{int}\ minR\ =\ 255,\ maxR\ =\ 0;}
+\DoxyCodeLine{00328\ \ \ \textcolor{keywordtype}{int}\ minG\ =\ 255,\ maxG\ =\ 0;}
+\DoxyCodeLine{00329\ \ \ \textcolor{keywordtype}{int}\ minB\ =\ 255,\ maxB\ =\ 0;}
+\DoxyCodeLine{00330\ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ ii\ =\ 0;\ ii\ <\ numPixels;\ ++ii)\ \{}
+\DoxyCodeLine{00331\ \ \ \ \ \textcolor{keywordtype}{int}\ r\ =\ image[ii\ *\ 4\ +\ 0];}
+\DoxyCodeLine{00332\ \ \ \ \ \textcolor{keywordtype}{int}\ g\ =\ image[ii\ *\ 4\ +\ 1];}
+\DoxyCodeLine{00333\ \ \ \ \ \textcolor{keywordtype}{int}\ b\ =\ image[ii\ *\ 4\ +\ 2];}
+\DoxyCodeLine{00334\ }
+\DoxyCodeLine{00335\ \ \ \ \ \textcolor{keywordflow}{if}\ (r\ >\ maxR)\ maxR\ =\ r;}
+\DoxyCodeLine{00336\ \ \ \ \ \textcolor{keywordflow}{if}\ (r\ <\ minR)\ minR\ =\ r;}
+\DoxyCodeLine{00337\ }
+\DoxyCodeLine{00338\ \ \ \ \ \textcolor{keywordflow}{if}\ (g\ >\ maxG)\ maxG\ =\ g;}
+\DoxyCodeLine{00339\ \ \ \ \ \textcolor{keywordflow}{if}\ (g\ <\ minG)\ minG\ =\ g;}
+\DoxyCodeLine{00340\ }
+\DoxyCodeLine{00341\ \ \ \ \ \textcolor{keywordflow}{if}\ (b\ >\ maxB)\ maxB\ =\ b;}
+\DoxyCodeLine{00342\ \ \ \ \ \textcolor{keywordflow}{if}\ (b\ <\ minB)\ minB\ =\ b;}
+\DoxyCodeLine{00343\ \ \ \}}
+\DoxyCodeLine{00344\ }
+\DoxyCodeLine{00345\ \ \ \textcolor{keywordtype}{int}\ rRange\ =\ maxR\ -\/\ minR;}
+\DoxyCodeLine{00346\ \ \ \textcolor{keywordtype}{int}\ gRange\ =\ maxG\ -\/\ minG;}
+\DoxyCodeLine{00347\ \ \ \textcolor{keywordtype}{int}\ bRange\ =\ maxB\ -\/\ minB;}
+\DoxyCodeLine{00348\ }
+\DoxyCodeLine{00349\ \ \ \textcolor{comment}{//\ and\ split\ along\ that\ axis.\ (incidentally,\ this\ means\ this\ isn't\ a\ "{}proper"{}}}
+\DoxyCodeLine{00350\ \ \ \textcolor{comment}{//\ k-\/d\ tree\ but\ I\ don't\ know\ what\ else\ to\ call\ it)}}
+\DoxyCodeLine{00351\ \ \ \textcolor{keywordtype}{int}\ splitCom\ =\ 1;}
+\DoxyCodeLine{00352\ \ \ \textcolor{keywordflow}{if}\ (bRange\ >\ gRange)\ splitCom\ =\ 2;}
+\DoxyCodeLine{00353\ \ \ \textcolor{keywordflow}{if}\ (rRange\ >\ bRange\ \&\&\ rRange\ >\ gRange)\ splitCom\ =\ 0;}
+\DoxyCodeLine{00354\ }
+\DoxyCodeLine{00355\ \ \ \textcolor{keywordtype}{int}\ subPixelsA\ =\ numPixels\ *\ (splitElt\ -\/\ firstElt)\ /\ (lastElt\ -\/\ firstElt);}
+\DoxyCodeLine{00356\ \ \ \textcolor{keywordtype}{int}\ subPixelsB\ =\ numPixels\ -\/\ subPixelsA;}
+\DoxyCodeLine{00357\ }
+\DoxyCodeLine{00358\ \ \ \mbox{\hyperlink{gif_8h_aa3789c1923f40cb85ccccca4fcdae41c}{GifPartitionByMedian}}(image,\ 0,\ numPixels,\ splitCom,\ subPixelsA);}
+\DoxyCodeLine{00359\ }
+\DoxyCodeLine{00360\ \ \ pal-\/>\mbox{\hyperlink{structGifPalette_a333c9b8872127221ca62d41413f20638}{treeSplitElt}}[treeNode]\ =\ (uint8\_t)splitCom;}
+\DoxyCodeLine{00361\ \ \ pal-\/>\mbox{\hyperlink{structGifPalette_abb62e3544c63e7ef418ead69b2c17b61}{treeSplit}}[treeNode]\ =\ image[subPixelsA\ *\ 4\ +\ splitCom];}
+\DoxyCodeLine{00362\ }
+\DoxyCodeLine{00363\ \ \ \mbox{\hyperlink{gif_8h_ace441d978463380721538e95c029ee71}{GifSplitPalette}}(image,\ subPixelsA,\ firstElt,\ splitElt,\ splitElt\ -\/\ splitDist,}
+\DoxyCodeLine{00364\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ splitDist\ /\ 2,\ treeNode\ *\ 2,\ buildForDither,\ pal);}
+\DoxyCodeLine{00365\ \ \ \mbox{\hyperlink{gif_8h_ace441d978463380721538e95c029ee71}{GifSplitPalette}}(image\ +\ subPixelsA\ *\ 4,\ subPixelsB,\ splitElt,\ lastElt,}
+\DoxyCodeLine{00366\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ splitElt\ +\ splitDist,\ splitDist\ /\ 2,\ treeNode\ *\ 2\ +\ 1,}
+\DoxyCodeLine{00367\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ buildForDither,\ pal);}
+\DoxyCodeLine{00368\ \}}
+\DoxyCodeLine{00369\ }
+\DoxyCodeLine{00370\ \textcolor{comment}{//\ Finds\ all\ pixels\ that\ have\ changed\ from\ the\ previous\ image\ and}}
+\DoxyCodeLine{00371\ \textcolor{comment}{//\ moves\ them\ to\ the\ fromt\ of\ th\ buffer.}}
+\DoxyCodeLine{00372\ \textcolor{comment}{//\ This\ allows\ us\ to\ build\ a\ palette\ optimized\ for\ the\ colors\ of\ the}}
+\DoxyCodeLine{00373\ \textcolor{comment}{//\ changed\ pixels\ only.}}
+\DoxyCodeLine{00374\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{gif_8h_abb04d8e237daeb334a82c9d9600e42c1}{GifPickChangedPixels}}(\textcolor{keyword}{const}\ uint8\_t*\ lastFrame,\ uint8\_t*\ frame,}
+\DoxyCodeLine{00375\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ numPixels)\ \{}
+\DoxyCodeLine{00376\ \ \ \textcolor{keywordtype}{int}\ numChanged\ =\ 0;}
+\DoxyCodeLine{00377\ \ \ uint8\_t*\ writeIter\ =\ frame;}
+\DoxyCodeLine{00378\ }
+\DoxyCodeLine{00379\ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ ii\ =\ 0;\ ii\ <\ numPixels;\ ++ii)\ \{}
+\DoxyCodeLine{00380\ \ \ \ \ \textcolor{keywordflow}{if}\ (lastFrame[0]\ !=\ frame[0]\ ||\ lastFrame[1]\ !=\ frame[1]\ ||}
+\DoxyCodeLine{00381\ \ \ \ \ \ \ \ \ lastFrame[2]\ !=\ frame[2])\ \{}
+\DoxyCodeLine{00382\ \ \ \ \ \ \ writeIter[0]\ =\ frame[0];}
+\DoxyCodeLine{00383\ \ \ \ \ \ \ writeIter[1]\ =\ frame[1];}
+\DoxyCodeLine{00384\ \ \ \ \ \ \ writeIter[2]\ =\ frame[2];}
+\DoxyCodeLine{00385\ \ \ \ \ \ \ ++numChanged;}
+\DoxyCodeLine{00386\ \ \ \ \ \ \ writeIter\ +=\ 4;}
+\DoxyCodeLine{00387\ \ \ \ \ \}}
+\DoxyCodeLine{00388\ \ \ \ \ lastFrame\ +=\ 4;}
+\DoxyCodeLine{00389\ \ \ \ \ frame\ +=\ 4;}
+\DoxyCodeLine{00390\ \ \ \}}
+\DoxyCodeLine{00391\ }
+\DoxyCodeLine{00392\ \ \ \textcolor{keywordflow}{return}\ numChanged;}
+\DoxyCodeLine{00393\ \}}
+\DoxyCodeLine{00394\ }
+\DoxyCodeLine{00395\ \textcolor{comment}{//\ Creates\ a\ palette\ by\ placing\ all\ the\ image\ pixels\ in\ a\ k-\/d\ tree\ and\ then}}
+\DoxyCodeLine{00396\ \textcolor{comment}{//\ averaging\ the\ blocks\ at\ the\ bottom.\ This\ is\ known\ as\ the\ "{}modified\ median}}
+\DoxyCodeLine{00397\ \textcolor{comment}{//\ split"{}\ technique}}
+\DoxyCodeLine{00398\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{gif_8h_aa74cf10fec71223e47ef8a2e58f26319}{GifMakePalette}}(\textcolor{keyword}{const}\ uint8\_t*\ lastFrame,\ \textcolor{keyword}{const}\ uint8\_t*\ nextFrame,}
+\DoxyCodeLine{00399\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint32\_t\ width,\ uint32\_t\ height,\ \textcolor{keywordtype}{int}\ bitDepth,}
+\DoxyCodeLine{00400\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ buildForDither,\ \mbox{\hyperlink{structGifPalette}{GifPalette}}*\ pPal)\ \{}
+\DoxyCodeLine{00401\ \ \ pPal-\/>\mbox{\hyperlink{structGifPalette_a731b991a07d514c890cd3d6c9a8e51f3}{bitDepth}}\ =\ bitDepth;}
+\DoxyCodeLine{00402\ }
+\DoxyCodeLine{00403\ \ \ \textcolor{comment}{//\ SplitPalette\ is\ destructive\ (it\ sorts\ the\ pixels\ by\ color)\ so}}
+\DoxyCodeLine{00404\ \ \ \textcolor{comment}{//\ we\ must\ create\ a\ copy\ of\ the\ image\ for\ it\ to\ destroy}}
+\DoxyCodeLine{00405\ \ \ \textcolor{keywordtype}{size\_t}\ imageSize\ =\ (size\_t)(width\ *\ height\ *\ 4\ *\ \textcolor{keyword}{sizeof}(uint8\_t));}
+\DoxyCodeLine{00406\ \ \ uint8\_t*\ destroyableImage\ =\ (uint8\_t*)\mbox{\hyperlink{gif_8h_a94974606594583031e18618c12dfd1eb}{GIF\_TEMP\_MALLOC}}(imageSize);}
+\DoxyCodeLine{00407\ \ \ memcpy(destroyableImage,\ nextFrame,\ imageSize);}
+\DoxyCodeLine{00408\ }
+\DoxyCodeLine{00409\ \ \ \textcolor{keywordtype}{int}\ numPixels\ =\ (int)(width\ *\ height);}
+\DoxyCodeLine{00410\ \ \ \textcolor{keywordflow}{if}\ (lastFrame)}
+\DoxyCodeLine{00411\ \ \ \ \ numPixels\ =\ \mbox{\hyperlink{gif_8h_abb04d8e237daeb334a82c9d9600e42c1}{GifPickChangedPixels}}(lastFrame,\ destroyableImage,\ numPixels);}
+\DoxyCodeLine{00412\ }
+\DoxyCodeLine{00413\ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ lastElt\ =\ 1\ <<\ bitDepth;}
+\DoxyCodeLine{00414\ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ splitElt\ =\ lastElt\ /\ 2;}
+\DoxyCodeLine{00415\ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ splitDist\ =\ splitElt\ /\ 2;}
+\DoxyCodeLine{00416\ }
+\DoxyCodeLine{00417\ \ \ \mbox{\hyperlink{gif_8h_ace441d978463380721538e95c029ee71}{GifSplitPalette}}(destroyableImage,\ numPixels,\ 1,\ lastElt,\ splitElt,\ splitDist,}
+\DoxyCodeLine{00418\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ 1,\ buildForDither,\ pPal);}
+\DoxyCodeLine{00419\ }
+\DoxyCodeLine{00420\ \ \ \mbox{\hyperlink{gif_8h_a23e287fdaa48ccff1c3ff9500f358c23}{GIF\_TEMP\_FREE}}(destroyableImage);}
+\DoxyCodeLine{00421\ }
+\DoxyCodeLine{00422\ \ \ \textcolor{comment}{//\ add\ the\ bottom\ node\ for\ the\ transparency\ index}}
+\DoxyCodeLine{00423\ \ \ pPal-\/>\mbox{\hyperlink{structGifPalette_abb62e3544c63e7ef418ead69b2c17b61}{treeSplit}}[1\ <<\ (bitDepth\ -\/\ 1)]\ =\ 0;}
+\DoxyCodeLine{00424\ \ \ pPal-\/>\mbox{\hyperlink{structGifPalette_a333c9b8872127221ca62d41413f20638}{treeSplitElt}}[1\ <<\ (bitDepth\ -\/\ 1)]\ =\ 0;}
+\DoxyCodeLine{00425\ }
+\DoxyCodeLine{00426\ \ \ pPal-\/>\mbox{\hyperlink{structGifPalette_a614dead8bc7d3d8f4f24205f85a8b91b}{r}}[0]\ =\ pPal-\/>\mbox{\hyperlink{structGifPalette_a7c6b513664877530d38f31a32899bec6}{g}}[0]\ =\ pPal-\/>\mbox{\hyperlink{structGifPalette_a30c74a5ef1182b42a0fc290bd05eff51}{b}}[0]\ =\ 0;}
+\DoxyCodeLine{00427\ \}}
+\DoxyCodeLine{00428\ }
+\DoxyCodeLine{00429\ \textcolor{comment}{//\ Implements\ Floyd-\/Steinberg\ dithering,\ writes\ palette\ value\ to\ alpha}}
+\DoxyCodeLine{00430\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{gif_8h_a2af5ec26f052649cc9a44ae8dfee0c71}{GifDitherImage}}(\textcolor{keyword}{const}\ uint8\_t*\ lastFrame,\ \textcolor{keyword}{const}\ uint8\_t*\ nextFrame,}
+\DoxyCodeLine{00431\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint8\_t*\ outFrame,\ uint32\_t\ width,\ uint32\_t\ height,}
+\DoxyCodeLine{00432\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structGifPalette}{GifPalette}}*\ pPal)\ \{}
+\DoxyCodeLine{00433\ \ \ \textcolor{keywordtype}{int}\ numPixels\ =\ (int)(width\ *\ height);}
+\DoxyCodeLine{00434\ }
+\DoxyCodeLine{00435\ \ \ \textcolor{comment}{//\ quantPixels\ initially\ holds\ color*256\ for\ all\ pixels}}
+\DoxyCodeLine{00436\ \ \ \textcolor{comment}{//\ The\ extra\ 8\ bits\ of\ precision\ allow\ for\ sub-\/single-\/color\ error\ values}}
+\DoxyCodeLine{00437\ \ \ \textcolor{comment}{//\ to\ be\ propagated}}
+\DoxyCodeLine{00438\ \ \ int32\_t*\ quantPixels\ =}
+\DoxyCodeLine{00439\ \ \ \ \ \ \ (int32\_t*)\mbox{\hyperlink{gif_8h_a94974606594583031e18618c12dfd1eb}{GIF\_TEMP\_MALLOC}}(\textcolor{keyword}{sizeof}(int32\_t)\ *\ (size\_t)numPixels\ *\ 4);}
+\DoxyCodeLine{00440\ }
+\DoxyCodeLine{00441\ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ ii\ =\ 0;\ ii\ <\ numPixels\ *\ 4;\ ++ii)\ \{}
+\DoxyCodeLine{00442\ \ \ \ \ uint8\_t\ pix\ =\ nextFrame[ii];}
+\DoxyCodeLine{00443\ \ \ \ \ int32\_t\ pix16\ =\ (int32\_t)(pix)*256;}
+\DoxyCodeLine{00444\ \ \ \ \ quantPixels[ii]\ =\ pix16;}
+\DoxyCodeLine{00445\ \ \ \}}
+\DoxyCodeLine{00446\ }
+\DoxyCodeLine{00447\ \ \ \textcolor{keywordflow}{for}\ (uint32\_t\ yy\ =\ 0;\ yy\ <\ height;\ ++yy)\ \{}
+\DoxyCodeLine{00448\ \ \ \ \ \textcolor{keywordflow}{for}\ (uint32\_t\ xx\ =\ 0;\ xx\ <\ width;\ ++xx)\ \{}
+\DoxyCodeLine{00449\ \ \ \ \ \ \ int32\_t*\ nextPix\ =\ quantPixels\ +\ 4\ *\ (yy\ *\ width\ +\ xx);}
+\DoxyCodeLine{00450\ \ \ \ \ \ \ \textcolor{keyword}{const}\ uint8\_t*\ lastPix\ =}
+\DoxyCodeLine{00451\ \ \ \ \ \ \ \ \ \ \ lastFrame\ ?\ lastFrame\ +\ 4\ *\ (yy\ *\ width\ +\ xx)\ :\ NULL;}
+\DoxyCodeLine{00452\ }
+\DoxyCodeLine{00453\ \ \ \ \ \ \ \textcolor{comment}{//\ Compute\ the\ colors\ we\ want\ (rounding\ to\ nearest)}}
+\DoxyCodeLine{00454\ \ \ \ \ \ \ int32\_t\ rr\ =\ (nextPix[0]\ +\ 127)\ /\ 256;}
+\DoxyCodeLine{00455\ \ \ \ \ \ \ int32\_t\ gg\ =\ (nextPix[1]\ +\ 127)\ /\ 256;}
+\DoxyCodeLine{00456\ \ \ \ \ \ \ int32\_t\ bb\ =\ (nextPix[2]\ +\ 127)\ /\ 256;}
+\DoxyCodeLine{00457\ }
+\DoxyCodeLine{00458\ \ \ \ \ \ \ \textcolor{comment}{//\ if\ it\ happens\ that\ we\ want\ the\ color\ from\ last\ frame,\ then\ just\ write}}
+\DoxyCodeLine{00459\ \ \ \ \ \ \ \textcolor{comment}{//\ out\ a\ transparent\ pixel}}
+\DoxyCodeLine{00460\ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (lastFrame\ \&\&\ lastPix[0]\ ==\ rr\ \&\&\ lastPix[1]\ ==\ gg\ \&\&}
+\DoxyCodeLine{00461\ \ \ \ \ \ \ \ \ \ \ lastPix[2]\ ==\ bb)\ \{}
+\DoxyCodeLine{00462\ \ \ \ \ \ \ \ \ nextPix[0]\ =\ rr;}
+\DoxyCodeLine{00463\ \ \ \ \ \ \ \ \ nextPix[1]\ =\ gg;}
+\DoxyCodeLine{00464\ \ \ \ \ \ \ \ \ nextPix[2]\ =\ bb;}
+\DoxyCodeLine{00465\ \ \ \ \ \ \ \ \ nextPix[3]\ =\ \mbox{\hyperlink{gif_8h_a3bbc4876f24cc742e2cbb68fa3c88fe9}{kGifTransIndex}};}
+\DoxyCodeLine{00466\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{continue};}
+\DoxyCodeLine{00467\ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00468\ }
+\DoxyCodeLine{00469\ \ \ \ \ \ \ int32\_t\ bestDiff\ =\ 1000000;}
+\DoxyCodeLine{00470\ \ \ \ \ \ \ int32\_t\ bestInd\ =\ \mbox{\hyperlink{gif_8h_a3bbc4876f24cc742e2cbb68fa3c88fe9}{kGifTransIndex}};}
+\DoxyCodeLine{00471\ }
+\DoxyCodeLine{00472\ \ \ \ \ \ \ \textcolor{comment}{//\ Search\ the\ palete}}
+\DoxyCodeLine{00473\ \ \ \ \ \ \ \mbox{\hyperlink{gif_8h_a17526c4fd7bdc86c779c6253279abee5}{GifGetClosestPaletteColor}}(pPal,\ rr,\ gg,\ bb,\ \&bestInd,\ \&bestDiff,\ 1);}
+\DoxyCodeLine{00474\ }
+\DoxyCodeLine{00475\ \ \ \ \ \ \ \textcolor{comment}{//\ Write\ the\ result\ to\ the\ temp\ buffer}}
+\DoxyCodeLine{00476\ \ \ \ \ \ \ int32\_t\ r\_err\ =\ nextPix[0]\ -\/\ (int32\_t)(pPal-\/>\mbox{\hyperlink{structGifPalette_a614dead8bc7d3d8f4f24205f85a8b91b}{r}}[bestInd])\ *\ 256;}
+\DoxyCodeLine{00477\ \ \ \ \ \ \ int32\_t\ g\_err\ =\ nextPix[1]\ -\/\ (int32\_t)(pPal-\/>\mbox{\hyperlink{structGifPalette_a7c6b513664877530d38f31a32899bec6}{g}}[bestInd])\ *\ 256;}
+\DoxyCodeLine{00478\ \ \ \ \ \ \ int32\_t\ b\_err\ =\ nextPix[2]\ -\/\ (int32\_t)(pPal-\/>\mbox{\hyperlink{structGifPalette_a30c74a5ef1182b42a0fc290bd05eff51}{b}}[bestInd])\ *\ 256;}
+\DoxyCodeLine{00479\ }
+\DoxyCodeLine{00480\ \ \ \ \ \ \ nextPix[0]\ =\ pPal-\/>\mbox{\hyperlink{structGifPalette_a614dead8bc7d3d8f4f24205f85a8b91b}{r}}[bestInd];}
+\DoxyCodeLine{00481\ \ \ \ \ \ \ nextPix[1]\ =\ pPal-\/>\mbox{\hyperlink{structGifPalette_a7c6b513664877530d38f31a32899bec6}{g}}[bestInd];}
+\DoxyCodeLine{00482\ \ \ \ \ \ \ nextPix[2]\ =\ pPal-\/>\mbox{\hyperlink{structGifPalette_a30c74a5ef1182b42a0fc290bd05eff51}{b}}[bestInd];}
+\DoxyCodeLine{00483\ \ \ \ \ \ \ nextPix[3]\ =\ bestInd;}
+\DoxyCodeLine{00484\ }
+\DoxyCodeLine{00485\ \ \ \ \ \ \ \textcolor{comment}{//\ Propagate\ the\ error\ to\ the\ four\ adjacent\ locations}}
+\DoxyCodeLine{00486\ \ \ \ \ \ \ \textcolor{comment}{//\ that\ we\ haven't\ touched\ yet}}
+\DoxyCodeLine{00487\ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ quantloc\_7\ =\ (int)(yy\ *\ width\ +\ xx\ +\ 1);}
+\DoxyCodeLine{00488\ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ quantloc\_3\ =\ (int)(yy\ *\ width\ +\ width\ +\ xx\ -\/\ 1);}
+\DoxyCodeLine{00489\ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ quantloc\_5\ =\ (int)(yy\ *\ width\ +\ width\ +\ xx);}
+\DoxyCodeLine{00490\ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ quantloc\_1\ =\ (int)(yy\ *\ width\ +\ width\ +\ xx\ +\ 1);}
+\DoxyCodeLine{00491\ }
+\DoxyCodeLine{00492\ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (quantloc\_7\ <\ numPixels)\ \{}
+\DoxyCodeLine{00493\ \ \ \ \ \ \ \ \ int32\_t*\ pix7\ =\ quantPixels\ +\ 4\ *\ quantloc\_7;}
+\DoxyCodeLine{00494\ \ \ \ \ \ \ \ \ pix7[0]\ +=\ \mbox{\hyperlink{gif_8h_abec89660e26d5d306a68352215b9a0be}{GifIMax}}(-\/pix7[0],\ r\_err\ *\ 7\ /\ 16);}
+\DoxyCodeLine{00495\ \ \ \ \ \ \ \ \ pix7[1]\ +=\ \mbox{\hyperlink{gif_8h_abec89660e26d5d306a68352215b9a0be}{GifIMax}}(-\/pix7[1],\ g\_err\ *\ 7\ /\ 16);}
+\DoxyCodeLine{00496\ \ \ \ \ \ \ \ \ pix7[2]\ +=\ \mbox{\hyperlink{gif_8h_abec89660e26d5d306a68352215b9a0be}{GifIMax}}(-\/pix7[2],\ b\_err\ *\ 7\ /\ 16);}
+\DoxyCodeLine{00497\ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00498\ }
+\DoxyCodeLine{00499\ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (quantloc\_3\ <\ numPixels)\ \{}
+\DoxyCodeLine{00500\ \ \ \ \ \ \ \ \ int32\_t*\ pix3\ =\ quantPixels\ +\ 4\ *\ quantloc\_3;}
+\DoxyCodeLine{00501\ \ \ \ \ \ \ \ \ pix3[0]\ +=\ \mbox{\hyperlink{gif_8h_abec89660e26d5d306a68352215b9a0be}{GifIMax}}(-\/pix3[0],\ r\_err\ *\ 3\ /\ 16);}
+\DoxyCodeLine{00502\ \ \ \ \ \ \ \ \ pix3[1]\ +=\ \mbox{\hyperlink{gif_8h_abec89660e26d5d306a68352215b9a0be}{GifIMax}}(-\/pix3[1],\ g\_err\ *\ 3\ /\ 16);}
+\DoxyCodeLine{00503\ \ \ \ \ \ \ \ \ pix3[2]\ +=\ \mbox{\hyperlink{gif_8h_abec89660e26d5d306a68352215b9a0be}{GifIMax}}(-\/pix3[2],\ b\_err\ *\ 3\ /\ 16);}
+\DoxyCodeLine{00504\ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00505\ }
+\DoxyCodeLine{00506\ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (quantloc\_5\ <\ numPixels)\ \{}
+\DoxyCodeLine{00507\ \ \ \ \ \ \ \ \ int32\_t*\ pix5\ =\ quantPixels\ +\ 4\ *\ quantloc\_5;}
+\DoxyCodeLine{00508\ \ \ \ \ \ \ \ \ pix5[0]\ +=\ \mbox{\hyperlink{gif_8h_abec89660e26d5d306a68352215b9a0be}{GifIMax}}(-\/pix5[0],\ r\_err\ *\ 5\ /\ 16);}
+\DoxyCodeLine{00509\ \ \ \ \ \ \ \ \ pix5[1]\ +=\ \mbox{\hyperlink{gif_8h_abec89660e26d5d306a68352215b9a0be}{GifIMax}}(-\/pix5[1],\ g\_err\ *\ 5\ /\ 16);}
+\DoxyCodeLine{00510\ \ \ \ \ \ \ \ \ pix5[2]\ +=\ \mbox{\hyperlink{gif_8h_abec89660e26d5d306a68352215b9a0be}{GifIMax}}(-\/pix5[2],\ b\_err\ *\ 5\ /\ 16);}
+\DoxyCodeLine{00511\ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00512\ }
+\DoxyCodeLine{00513\ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (quantloc\_1\ <\ numPixels)\ \{}
+\DoxyCodeLine{00514\ \ \ \ \ \ \ \ \ int32\_t*\ pix1\ =\ quantPixels\ +\ 4\ *\ quantloc\_1;}
+\DoxyCodeLine{00515\ \ \ \ \ \ \ \ \ pix1[0]\ +=\ \mbox{\hyperlink{gif_8h_abec89660e26d5d306a68352215b9a0be}{GifIMax}}(-\/pix1[0],\ r\_err\ /\ 16);}
+\DoxyCodeLine{00516\ \ \ \ \ \ \ \ \ pix1[1]\ +=\ \mbox{\hyperlink{gif_8h_abec89660e26d5d306a68352215b9a0be}{GifIMax}}(-\/pix1[1],\ g\_err\ /\ 16);}
+\DoxyCodeLine{00517\ \ \ \ \ \ \ \ \ pix1[2]\ +=\ \mbox{\hyperlink{gif_8h_abec89660e26d5d306a68352215b9a0be}{GifIMax}}(-\/pix1[2],\ b\_err\ /\ 16);}
+\DoxyCodeLine{00518\ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00519\ \ \ \ \ \}}
+\DoxyCodeLine{00520\ \ \ \}}
+\DoxyCodeLine{00521\ }
+\DoxyCodeLine{00522\ \ \ \textcolor{comment}{//\ Copy\ the\ palettized\ result\ to\ the\ output\ buffer}}
+\DoxyCodeLine{00523\ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ ii\ =\ 0;\ ii\ <\ numPixels\ *\ 4;\ ++ii)\ \{}
+\DoxyCodeLine{00524\ \ \ \ \ outFrame[ii]\ =\ (uint8\_t)quantPixels[ii];}
+\DoxyCodeLine{00525\ \ \ \}}
+\DoxyCodeLine{00526\ }
+\DoxyCodeLine{00527\ \ \ \mbox{\hyperlink{gif_8h_a23e287fdaa48ccff1c3ff9500f358c23}{GIF\_TEMP\_FREE}}(quantPixels);}
+\DoxyCodeLine{00528\ \}}
+\DoxyCodeLine{00529\ }
+\DoxyCodeLine{00530\ \textcolor{comment}{//\ Picks\ palette\ colors\ for\ the\ image\ using\ simple\ thresholding,\ no\ dithering}}
+\DoxyCodeLine{00531\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{gif_8h_a2731ed1895124d923ccc3657203824b8}{GifThresholdImage}}(\textcolor{keyword}{const}\ uint8\_t*\ lastFrame,\ \textcolor{keyword}{const}\ uint8\_t*\ nextFrame,}
+\DoxyCodeLine{00532\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint8\_t*\ outFrame,\ uint32\_t\ width,\ uint32\_t\ height,}
+\DoxyCodeLine{00533\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structGifPalette}{GifPalette}}*\ pPal)\ \{}
+\DoxyCodeLine{00534\ \ \ uint32\_t\ numPixels\ =\ width\ *\ height;}
+\DoxyCodeLine{00535\ \ \ \textcolor{keywordflow}{for}\ (uint32\_t\ ii\ =\ 0;\ ii\ <\ numPixels;\ ++ii)\ \{}
+\DoxyCodeLine{00536\ \ \ \ \ \textcolor{comment}{//\ if\ a\ previous\ color\ is\ available,\ and\ it\ matches\ the\ current\ color,}}
+\DoxyCodeLine{00537\ \ \ \ \ \textcolor{comment}{//\ set\ the\ pixel\ to\ transparent}}
+\DoxyCodeLine{00538\ \ \ \ \ \textcolor{keywordflow}{if}\ (lastFrame\ \&\&\ lastFrame[0]\ ==\ nextFrame[0]\ \&\&}
+\DoxyCodeLine{00539\ \ \ \ \ \ \ \ \ lastFrame[1]\ ==\ nextFrame[1]\ \&\&\ lastFrame[2]\ ==\ nextFrame[2])\ \{}
+\DoxyCodeLine{00540\ \ \ \ \ \ \ outFrame[0]\ =\ lastFrame[0];}
+\DoxyCodeLine{00541\ \ \ \ \ \ \ outFrame[1]\ =\ lastFrame[1];}
+\DoxyCodeLine{00542\ \ \ \ \ \ \ outFrame[2]\ =\ lastFrame[2];}
+\DoxyCodeLine{00543\ \ \ \ \ \ \ outFrame[3]\ =\ \mbox{\hyperlink{gif_8h_a3bbc4876f24cc742e2cbb68fa3c88fe9}{kGifTransIndex}};}
+\DoxyCodeLine{00544\ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \{}
+\DoxyCodeLine{00545\ \ \ \ \ \ \ \textcolor{comment}{//\ palettize\ the\ pixel}}
+\DoxyCodeLine{00546\ \ \ \ \ \ \ int32\_t\ bestDiff\ =\ 1000000;}
+\DoxyCodeLine{00547\ \ \ \ \ \ \ int32\_t\ bestInd\ =\ 1;}
+\DoxyCodeLine{00548\ \ \ \ \ \ \ \mbox{\hyperlink{gif_8h_a17526c4fd7bdc86c779c6253279abee5}{GifGetClosestPaletteColor}}(pPal,\ nextFrame[0],\ nextFrame[1],\ nextFrame[2],}
+\DoxyCodeLine{00549\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \&bestInd,\ \&bestDiff,\ 1);}
+\DoxyCodeLine{00550\ }
+\DoxyCodeLine{00551\ \ \ \ \ \ \ \textcolor{comment}{//\ Write\ the\ resulting\ color\ to\ the\ output\ buffer}}
+\DoxyCodeLine{00552\ \ \ \ \ \ \ outFrame[0]\ =\ pPal-\/>\mbox{\hyperlink{structGifPalette_a614dead8bc7d3d8f4f24205f85a8b91b}{r}}[bestInd];}
+\DoxyCodeLine{00553\ \ \ \ \ \ \ outFrame[1]\ =\ pPal-\/>\mbox{\hyperlink{structGifPalette_a7c6b513664877530d38f31a32899bec6}{g}}[bestInd];}
+\DoxyCodeLine{00554\ \ \ \ \ \ \ outFrame[2]\ =\ pPal-\/>\mbox{\hyperlink{structGifPalette_a30c74a5ef1182b42a0fc290bd05eff51}{b}}[bestInd];}
+\DoxyCodeLine{00555\ \ \ \ \ \ \ outFrame[3]\ =\ (uint8\_t)bestInd;}
+\DoxyCodeLine{00556\ \ \ \ \ \}}
+\DoxyCodeLine{00557\ }
+\DoxyCodeLine{00558\ \ \ \ \ \textcolor{keywordflow}{if}\ (lastFrame)\ lastFrame\ +=\ 4;}
+\DoxyCodeLine{00559\ \ \ \ \ outFrame\ +=\ 4;}
+\DoxyCodeLine{00560\ \ \ \ \ nextFrame\ +=\ 4;}
+\DoxyCodeLine{00561\ \ \ \}}
+\DoxyCodeLine{00562\ \}}
+\DoxyCodeLine{00563\ }
+\DoxyCodeLine{00564\ \textcolor{comment}{//\ Simple\ structure\ to\ write\ out\ the\ LZW-\/compressed\ portion\ of\ the\ image}}
+\DoxyCodeLine{00565\ \textcolor{comment}{//\ one\ bit\ at\ a\ time}}
+\DoxyCodeLine{00566\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\{}
+\DoxyCodeLine{00567\ \ \ uint8\_t\ \mbox{\hyperlink{structGifBitStatus_af9656fa0f44b70918f837c64f11c454d}{bitIndex}};\ \ \textcolor{comment}{//\ how\ many\ bits\ in\ the\ partial\ byte\ written\ so\ far}}
+\DoxyCodeLine{00568\ \ \ uint8\_t\ \mbox{\hyperlink{structGifBitStatus_a7987e3fd77a0c0d785daa3c04e2e51f3}{byte}};\ \ \ \ \ \ \textcolor{comment}{//\ current\ partial\ byte}}
+\DoxyCodeLine{00569\ }
+\DoxyCodeLine{00570\ \ \ uint32\_t\ \mbox{\hyperlink{structGifBitStatus_a4018ea26e19f7e11b280564ed32c8ec0}{chunkIndex}};}
+\DoxyCodeLine{00571\ \ \ uint8\_t\ chunk[256];\ \ \textcolor{comment}{//\ bytes\ are\ written\ in\ here\ until\ we\ have\ 256\ of\ them,}}
+\DoxyCodeLine{00572\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ then\ written\ to\ the\ file}}
+\DoxyCodeLine{00573\ \}\ \mbox{\hyperlink{structGifBitStatus}{GifBitStatus}};}
+\DoxyCodeLine{00574\ }
+\DoxyCodeLine{00575\ \textcolor{comment}{//\ insert\ a\ single\ bit}}
+\DoxyCodeLine{00576\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{gif_8h_a1bef4f7413c37a9b37b49293d3aef201}{GifWriteBit}}(\mbox{\hyperlink{structGifBitStatus}{GifBitStatus}}*\ stat,\ uint32\_t\ bit)\ \{}
+\DoxyCodeLine{00577\ \ \ bit\ =\ bit\ \&\ 1;}
+\DoxyCodeLine{00578\ \ \ bit\ =\ bit\ <<\ stat-\/>\mbox{\hyperlink{structGifBitStatus_af9656fa0f44b70918f837c64f11c454d}{bitIndex}};}
+\DoxyCodeLine{00579\ \ \ stat-\/>\mbox{\hyperlink{structGifBitStatus_a7987e3fd77a0c0d785daa3c04e2e51f3}{byte}}\ |=\ bit;}
+\DoxyCodeLine{00580\ }
+\DoxyCodeLine{00581\ \ \ ++stat-\/>\mbox{\hyperlink{structGifBitStatus_af9656fa0f44b70918f837c64f11c454d}{bitIndex}};}
+\DoxyCodeLine{00582\ \ \ \textcolor{keywordflow}{if}\ (stat-\/>\mbox{\hyperlink{structGifBitStatus_af9656fa0f44b70918f837c64f11c454d}{bitIndex}}\ >\ 7)\ \{}
+\DoxyCodeLine{00583\ \ \ \ \ \textcolor{comment}{//\ move\ the\ newly-\/finished\ byte\ to\ the\ chunk\ buffer}}
+\DoxyCodeLine{00584\ \ \ \ \ stat-\/>\mbox{\hyperlink{structGifBitStatus_a733355b73a7c87b148c42d8ae820a79c}{chunk}}[stat-\/>\mbox{\hyperlink{structGifBitStatus_a4018ea26e19f7e11b280564ed32c8ec0}{chunkIndex}}++]\ =\ stat-\/>\mbox{\hyperlink{structGifBitStatus_a7987e3fd77a0c0d785daa3c04e2e51f3}{byte}};}
+\DoxyCodeLine{00585\ \ \ \ \ \textcolor{comment}{//\ and\ start\ a\ new\ byte}}
+\DoxyCodeLine{00586\ \ \ \ \ stat-\/>\mbox{\hyperlink{structGifBitStatus_af9656fa0f44b70918f837c64f11c454d}{bitIndex}}\ =\ 0;}
+\DoxyCodeLine{00587\ \ \ \ \ stat-\/>\mbox{\hyperlink{structGifBitStatus_a7987e3fd77a0c0d785daa3c04e2e51f3}{byte}}\ =\ 0;}
+\DoxyCodeLine{00588\ \ \ \}}
+\DoxyCodeLine{00589\ \}}
+\DoxyCodeLine{00590\ }
+\DoxyCodeLine{00591\ \textcolor{comment}{//\ write\ all\ bytes\ so\ far\ to\ the\ file}}
+\DoxyCodeLine{00592\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{gif_8h_a56779e2201dcfb75425c2a9563360189}{GifWriteChunk}}(FILE*\ f,\ \mbox{\hyperlink{structGifBitStatus}{GifBitStatus}}*\ stat)\ \{}
+\DoxyCodeLine{00593\ \ \ fputc((\textcolor{keywordtype}{int})stat-\/>\mbox{\hyperlink{structGifBitStatus_a4018ea26e19f7e11b280564ed32c8ec0}{chunkIndex}},\ f);}
+\DoxyCodeLine{00594\ \ \ fwrite(stat-\/>\mbox{\hyperlink{structGifBitStatus_a733355b73a7c87b148c42d8ae820a79c}{chunk}},\ 1,\ stat-\/>\mbox{\hyperlink{structGifBitStatus_a4018ea26e19f7e11b280564ed32c8ec0}{chunkIndex}},\ f);}
+\DoxyCodeLine{00595\ }
+\DoxyCodeLine{00596\ \ \ stat-\/>\mbox{\hyperlink{structGifBitStatus_af9656fa0f44b70918f837c64f11c454d}{bitIndex}}\ =\ 0;}
+\DoxyCodeLine{00597\ \ \ stat-\/>\mbox{\hyperlink{structGifBitStatus_a7987e3fd77a0c0d785daa3c04e2e51f3}{byte}}\ =\ 0;}
+\DoxyCodeLine{00598\ \ \ stat-\/>\mbox{\hyperlink{structGifBitStatus_a4018ea26e19f7e11b280564ed32c8ec0}{chunkIndex}}\ =\ 0;}
+\DoxyCodeLine{00599\ \}}
+\DoxyCodeLine{00600\ }
+\DoxyCodeLine{00601\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{gif_8h_a8707778c428e9de1d108e5eb79c2c008}{GifWriteCode}}(FILE*\ f,\ \mbox{\hyperlink{structGifBitStatus}{GifBitStatus}}*\ stat,\ uint32\_t\ code,\ uint32\_t\ length)\ \{}
+\DoxyCodeLine{00602\ \ \ \textcolor{keywordflow}{for}\ (uint32\_t\ ii\ =\ 0;\ ii\ <\ length;\ ++ii)\ \{}
+\DoxyCodeLine{00603\ \ \ \ \ \mbox{\hyperlink{gif_8h_a1bef4f7413c37a9b37b49293d3aef201}{GifWriteBit}}(stat,\ code);}
+\DoxyCodeLine{00604\ \ \ \ \ code\ =\ code\ >>\ 1;}
+\DoxyCodeLine{00605\ }
+\DoxyCodeLine{00606\ \ \ \ \ \textcolor{keywordflow}{if}\ (stat-\/>\mbox{\hyperlink{structGifBitStatus_a4018ea26e19f7e11b280564ed32c8ec0}{chunkIndex}}\ ==\ 255)\ \{}
+\DoxyCodeLine{00607\ \ \ \ \ \ \ \mbox{\hyperlink{gif_8h_a56779e2201dcfb75425c2a9563360189}{GifWriteChunk}}(f,\ stat);}
+\DoxyCodeLine{00608\ \ \ \ \ \}}
+\DoxyCodeLine{00609\ \ \ \}}
+\DoxyCodeLine{00610\ \}}
+\DoxyCodeLine{00611\ }
+\DoxyCodeLine{00612\ \textcolor{comment}{//\ The\ LZW\ dictionary\ is\ a\ 256-\/ary\ tree\ constructed\ as\ the\ file\ is\ encoded,}}
+\DoxyCodeLine{00613\ \textcolor{comment}{//\ this\ is\ one\ node}}
+\DoxyCodeLine{00614\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\{}
+\DoxyCodeLine{00615\ \ \ uint16\_t\ m\_next[256];}
+\DoxyCodeLine{00616\ \}\ \mbox{\hyperlink{structGifLzwNode}{GifLzwNode}};}
+\DoxyCodeLine{00617\ }
+\DoxyCodeLine{00618\ \textcolor{comment}{//\ write\ a\ 256-\/color\ (8-\/bit)\ image\ palette\ to\ the\ file}}
+\DoxyCodeLine{00619\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{gif_8h_a0e05fd556ad17a66a43f76a501fcff53}{GifWritePalette}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{structGifPalette}{GifPalette}}*\ pPal,\ FILE*\ f)\ \{}
+\DoxyCodeLine{00620\ \ \ fputc(0,\ f);\ \ \textcolor{comment}{//\ first\ color:\ transparency}}
+\DoxyCodeLine{00621\ \ \ fputc(0,\ f);}
+\DoxyCodeLine{00622\ \ \ fputc(0,\ f);}
+\DoxyCodeLine{00623\ }
+\DoxyCodeLine{00624\ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ ii\ =\ 1;\ ii\ <\ (1\ <<\ pPal-\/>\mbox{\hyperlink{structGifPalette_a731b991a07d514c890cd3d6c9a8e51f3}{bitDepth}});\ ++ii)\ \{}
+\DoxyCodeLine{00625\ \ \ \ \ uint32\_t\ r\ =\ pPal-\/>\mbox{\hyperlink{structGifPalette_a614dead8bc7d3d8f4f24205f85a8b91b}{r}}[ii];}
+\DoxyCodeLine{00626\ \ \ \ \ uint32\_t\ g\ =\ pPal-\/>\mbox{\hyperlink{structGifPalette_a7c6b513664877530d38f31a32899bec6}{g}}[ii];}
+\DoxyCodeLine{00627\ \ \ \ \ uint32\_t\ b\ =\ pPal-\/>\mbox{\hyperlink{structGifPalette_a30c74a5ef1182b42a0fc290bd05eff51}{b}}[ii];}
+\DoxyCodeLine{00628\ }
+\DoxyCodeLine{00629\ \ \ \ \ fputc((\textcolor{keywordtype}{int})r,\ f);}
+\DoxyCodeLine{00630\ \ \ \ \ fputc((\textcolor{keywordtype}{int})g,\ f);}
+\DoxyCodeLine{00631\ \ \ \ \ fputc((\textcolor{keywordtype}{int})b,\ f);}
+\DoxyCodeLine{00632\ \ \ \}}
+\DoxyCodeLine{00633\ \}}
+\DoxyCodeLine{00634\ }
+\DoxyCodeLine{00635\ \textcolor{comment}{//\ write\ the\ image\ header,\ LZW-\/compress\ and\ write\ out\ the\ image}}
+\DoxyCodeLine{00636\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{gif_8h_a0a0a058533dd6a0cc98c6f094e24c39e}{GifWriteLzwImage}}(FILE*\ f,\ uint8\_t*\ image,\ uint32\_t\ left,\ uint32\_t\ top,}
+\DoxyCodeLine{00637\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint32\_t\ width,\ uint32\_t\ height,\ uint32\_t\ delay,}
+\DoxyCodeLine{00638\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structGifPalette}{GifPalette}}*\ pPal)\ \{}
+\DoxyCodeLine{00639\ \ \ \textcolor{comment}{//\ graphics\ control\ extension}}
+\DoxyCodeLine{00640\ \ \ fputc(0x21,\ f);}
+\DoxyCodeLine{00641\ \ \ fputc(0xf9,\ f);}
+\DoxyCodeLine{00642\ \ \ fputc(0x04,\ f);}
+\DoxyCodeLine{00643\ \ \ fputc(0x05,\ f);\ \ \textcolor{comment}{//\ leave\ prev\ frame\ in\ place,\ this\ frame\ has\ transparency}}
+\DoxyCodeLine{00644\ \ \ fputc(delay\ \&\ 0xff,\ f);}
+\DoxyCodeLine{00645\ \ \ fputc((delay\ >>\ 8)\ \&\ 0xff,\ f);}
+\DoxyCodeLine{00646\ \ \ fputc(\mbox{\hyperlink{gif_8h_a3bbc4876f24cc742e2cbb68fa3c88fe9}{kGifTransIndex}},\ f);\ \ \textcolor{comment}{//\ transparent\ color\ index}}
+\DoxyCodeLine{00647\ \ \ fputc(0,\ f);}
+\DoxyCodeLine{00648\ }
+\DoxyCodeLine{00649\ \ \ fputc(0x2c,\ f);\ \ \textcolor{comment}{//\ image\ descriptor\ block}}
+\DoxyCodeLine{00650\ }
+\DoxyCodeLine{00651\ \ \ fputc(left\ \&\ 0xff,\ f);\ \ \textcolor{comment}{//\ corner\ of\ image\ in\ canvas\ space}}
+\DoxyCodeLine{00652\ \ \ fputc((left\ >>\ 8)\ \&\ 0xff,\ f);}
+\DoxyCodeLine{00653\ \ \ fputc(top\ \&\ 0xff,\ f);}
+\DoxyCodeLine{00654\ \ \ fputc((top\ >>\ 8)\ \&\ 0xff,\ f);}
+\DoxyCodeLine{00655\ }
+\DoxyCodeLine{00656\ \ \ fputc(width\ \&\ 0xff,\ f);\ \ \textcolor{comment}{//\ width\ and\ height\ of\ image}}
+\DoxyCodeLine{00657\ \ \ fputc((width\ >>\ 8)\ \&\ 0xff,\ f);}
+\DoxyCodeLine{00658\ \ \ fputc(height\ \&\ 0xff,\ f);}
+\DoxyCodeLine{00659\ \ \ fputc((height\ >>\ 8)\ \&\ 0xff,\ f);}
+\DoxyCodeLine{00660\ }
+\DoxyCodeLine{00661\ \ \ \textcolor{comment}{//\ fputc(0,\ f);\ //\ no\ local\ color\ table,\ no\ transparency}}
+\DoxyCodeLine{00662\ \ \ \textcolor{comment}{//\ fputc(0x80,\ f);\ //\ no\ local\ color\ table,\ but\ transparency}}
+\DoxyCodeLine{00663\ }
+\DoxyCodeLine{00664\ \ \ fputc(0x80\ +\ pPal-\/>\mbox{\hyperlink{structGifPalette_a731b991a07d514c890cd3d6c9a8e51f3}{bitDepth}}\ -\/\ 1,}
+\DoxyCodeLine{00665\ \ \ \ \ \ \ \ \ f);\ \ \textcolor{comment}{//\ local\ color\ table\ present,\ 2\ \string^\ bitDepth\ entries}}
+\DoxyCodeLine{00666\ \ \ \mbox{\hyperlink{gif_8h_a0e05fd556ad17a66a43f76a501fcff53}{GifWritePalette}}(pPal,\ f);}
+\DoxyCodeLine{00667\ }
+\DoxyCodeLine{00668\ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ minCodeSize\ =\ pPal-\/>\mbox{\hyperlink{structGifPalette_a731b991a07d514c890cd3d6c9a8e51f3}{bitDepth}};}
+\DoxyCodeLine{00669\ \ \ \textcolor{keyword}{const}\ uint32\_t\ clearCode\ =\ 1\ <<\ pPal-\/>\mbox{\hyperlink{structGifPalette_a731b991a07d514c890cd3d6c9a8e51f3}{bitDepth}};}
+\DoxyCodeLine{00670\ }
+\DoxyCodeLine{00671\ \ \ fputc(minCodeSize,\ f);\ \ \textcolor{comment}{//\ min\ code\ size\ 8\ bits}}
+\DoxyCodeLine{00672\ }
+\DoxyCodeLine{00673\ \ \ \mbox{\hyperlink{structGifLzwNode}{GifLzwNode}}*\ codetree\ =}
+\DoxyCodeLine{00674\ \ \ \ \ \ \ (\mbox{\hyperlink{structGifLzwNode}{GifLzwNode}}*)\mbox{\hyperlink{gif_8h_a94974606594583031e18618c12dfd1eb}{GIF\_TEMP\_MALLOC}}(\textcolor{keyword}{sizeof}(\mbox{\hyperlink{structGifLzwNode}{GifLzwNode}})\ *\ 4096);}
+\DoxyCodeLine{00675\ }
+\DoxyCodeLine{00676\ \ \ memset(codetree,\ 0,\ \textcolor{keyword}{sizeof}(\mbox{\hyperlink{structGifLzwNode}{GifLzwNode}})\ *\ 4096);}
+\DoxyCodeLine{00677\ \ \ int32\_t\ curCode\ =\ -\/1;}
+\DoxyCodeLine{00678\ \ \ uint32\_t\ codeSize\ =\ (uint32\_t)minCodeSize\ +\ 1;}
+\DoxyCodeLine{00679\ \ \ uint32\_t\ maxCode\ =\ clearCode\ +\ 1;}
+\DoxyCodeLine{00680\ }
+\DoxyCodeLine{00681\ \ \ \mbox{\hyperlink{structGifBitStatus}{GifBitStatus}}\ stat;}
+\DoxyCodeLine{00682\ \ \ stat.\mbox{\hyperlink{structGifBitStatus_a7987e3fd77a0c0d785daa3c04e2e51f3}{byte}}\ =\ 0;}
+\DoxyCodeLine{00683\ \ \ stat.\mbox{\hyperlink{structGifBitStatus_af9656fa0f44b70918f837c64f11c454d}{bitIndex}}\ =\ 0;}
+\DoxyCodeLine{00684\ \ \ stat.\mbox{\hyperlink{structGifBitStatus_a4018ea26e19f7e11b280564ed32c8ec0}{chunkIndex}}\ =\ 0;}
+\DoxyCodeLine{00685\ }
+\DoxyCodeLine{00686\ \ \ \mbox{\hyperlink{gif_8h_a8707778c428e9de1d108e5eb79c2c008}{GifWriteCode}}(f,\ \&stat,\ clearCode,}
+\DoxyCodeLine{00687\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ codeSize);\ \ \textcolor{comment}{//\ start\ with\ a\ fresh\ LZW\ dictionary}}
+\DoxyCodeLine{00688\ }
+\DoxyCodeLine{00689\ \ \ \textcolor{keywordflow}{for}\ (uint32\_t\ yy\ =\ 0;\ yy\ <\ height;\ ++yy)\ \{}
+\DoxyCodeLine{00690\ \ \ \ \ \textcolor{keywordflow}{for}\ (uint32\_t\ xx\ =\ 0;\ xx\ <\ width;\ ++xx)\ \{}
+\DoxyCodeLine{00691\ \textcolor{preprocessor}{\#ifdef\ GIF\_FLIP\_VERT}}
+\DoxyCodeLine{00692\ \ \ \ \ \ \ \textcolor{comment}{//\ bottom-\/left\ origin\ image\ (such\ as\ an\ OpenGL\ capture)}}
+\DoxyCodeLine{00693\ \ \ \ \ \ \ uint8\_t\ nextValue\ =\ image[((height\ -\/\ 1\ -\/\ yy)\ *\ width\ +\ xx)\ *\ 4\ +\ 3];}
+\DoxyCodeLine{00694\ \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{00695\ \ \ \ \ \ \ \textcolor{comment}{//\ top-\/left\ origin}}
+\DoxyCodeLine{00696\ \ \ \ \ \ \ uint8\_t\ nextValue\ =\ image[(yy\ *\ width\ +\ xx)\ *\ 4\ +\ 3];}
+\DoxyCodeLine{00697\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00698\ }
+\DoxyCodeLine{00699\ \ \ \ \ \ \ \textcolor{comment}{//\ "{}loser\ mode"{}\ -\/\ no\ compression,\ every\ single\ code\ is\ followed}}
+\DoxyCodeLine{00700\ \ \ \ \ \ \ \textcolor{comment}{//\ immediately\ by\ a\ clear}}
+\DoxyCodeLine{00701\ \ \ \ \ \ \ \textcolor{comment}{//\ WriteCode(\ f,\ stat,\ nextValue,\ codeSize\ );}}
+\DoxyCodeLine{00702\ \ \ \ \ \ \ \textcolor{comment}{//\ WriteCode(\ f,\ stat,\ 256,\ codeSize\ );}}
+\DoxyCodeLine{00703\ }
+\DoxyCodeLine{00704\ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (curCode\ <\ 0)\ \{}
+\DoxyCodeLine{00705\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ first\ value\ in\ a\ new\ run}}
+\DoxyCodeLine{00706\ \ \ \ \ \ \ \ \ curCode\ =\ nextValue;}
+\DoxyCodeLine{00707\ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \textcolor{keywordflow}{if}\ (codetree[curCode].m\_next[nextValue])\ \{}
+\DoxyCodeLine{00708\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ current\ run\ already\ in\ the\ dictionary}}
+\DoxyCodeLine{00709\ \ \ \ \ \ \ \ \ curCode\ =\ codetree[curCode].\mbox{\hyperlink{structGifLzwNode_aba8e227e7db39c9c65f0d31f1e0014f1}{m\_next}}[nextValue];}
+\DoxyCodeLine{00710\ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \{}
+\DoxyCodeLine{00711\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ finish\ the\ current\ run,\ write\ a\ code}}
+\DoxyCodeLine{00712\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{gif_8h_a8707778c428e9de1d108e5eb79c2c008}{GifWriteCode}}(f,\ \&stat,\ (uint32\_t)curCode,\ codeSize);}
+\DoxyCodeLine{00713\ }
+\DoxyCodeLine{00714\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ insert\ the\ new\ run\ into\ the\ dictionary}}
+\DoxyCodeLine{00715\ \ \ \ \ \ \ \ \ codetree[curCode].\mbox{\hyperlink{structGifLzwNode_aba8e227e7db39c9c65f0d31f1e0014f1}{m\_next}}[nextValue]\ =\ (uint16\_t)++maxCode;}
+\DoxyCodeLine{00716\ }
+\DoxyCodeLine{00717\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (maxCode\ >=\ (1ul\ <<\ codeSize))\ \{}
+\DoxyCodeLine{00718\ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ dictionary\ entry\ count\ has\ broken\ a\ size\ barrier,}}
+\DoxyCodeLine{00719\ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ we\ need\ more\ bits\ for\ codes}}
+\DoxyCodeLine{00720\ \ \ \ \ \ \ \ \ \ \ codeSize++;}
+\DoxyCodeLine{00721\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00722\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (maxCode\ ==\ 4095)\ \{}
+\DoxyCodeLine{00723\ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ the\ dictionary\ is\ full,\ clear\ it\ out\ and\ begin\ anew}}
+\DoxyCodeLine{00724\ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{gif_8h_a8707778c428e9de1d108e5eb79c2c008}{GifWriteCode}}(f,\ \&stat,\ clearCode,\ codeSize);\ \ \textcolor{comment}{//\ clear\ tree}}
+\DoxyCodeLine{00725\ }
+\DoxyCodeLine{00726\ \ \ \ \ \ \ \ \ \ \ memset(codetree,\ 0,\ \textcolor{keyword}{sizeof}(\mbox{\hyperlink{structGifLzwNode}{GifLzwNode}})\ *\ 4096);}
+\DoxyCodeLine{00727\ \ \ \ \ \ \ \ \ \ \ codeSize\ =\ (uint32\_t)(minCodeSize\ +\ 1);}
+\DoxyCodeLine{00728\ \ \ \ \ \ \ \ \ \ \ maxCode\ =\ clearCode\ +\ 1;}
+\DoxyCodeLine{00729\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00730\ }
+\DoxyCodeLine{00731\ \ \ \ \ \ \ \ \ curCode\ =\ nextValue;}
+\DoxyCodeLine{00732\ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00733\ \ \ \ \ \}}
+\DoxyCodeLine{00734\ \ \ \}}
+\DoxyCodeLine{00735\ }
+\DoxyCodeLine{00736\ \ \ \textcolor{comment}{//\ compression\ footer}}
+\DoxyCodeLine{00737\ \ \ \mbox{\hyperlink{gif_8h_a8707778c428e9de1d108e5eb79c2c008}{GifWriteCode}}(f,\ \&stat,\ (uint32\_t)curCode,\ codeSize);}
+\DoxyCodeLine{00738\ \ \ \mbox{\hyperlink{gif_8h_a8707778c428e9de1d108e5eb79c2c008}{GifWriteCode}}(f,\ \&stat,\ clearCode,\ codeSize);}
+\DoxyCodeLine{00739\ \ \ \mbox{\hyperlink{gif_8h_a8707778c428e9de1d108e5eb79c2c008}{GifWriteCode}}(f,\ \&stat,\ clearCode\ +\ 1,\ (uint32\_t)minCodeSize\ +\ 1);}
+\DoxyCodeLine{00740\ }
+\DoxyCodeLine{00741\ \ \ \textcolor{comment}{//\ write\ out\ the\ last\ partial\ chunk}}
+\DoxyCodeLine{00742\ \ \ \textcolor{keywordflow}{while}\ (stat.\mbox{\hyperlink{structGifBitStatus_af9656fa0f44b70918f837c64f11c454d}{bitIndex}})\ \mbox{\hyperlink{gif_8h_a1bef4f7413c37a9b37b49293d3aef201}{GifWriteBit}}(\&stat,\ 0);}
+\DoxyCodeLine{00743\ \ \ \textcolor{keywordflow}{if}\ (stat.\mbox{\hyperlink{structGifBitStatus_a4018ea26e19f7e11b280564ed32c8ec0}{chunkIndex}})\ \mbox{\hyperlink{gif_8h_a56779e2201dcfb75425c2a9563360189}{GifWriteChunk}}(f,\ \&stat);}
+\DoxyCodeLine{00744\ }
+\DoxyCodeLine{00745\ \ \ fputc(0,\ f);\ \ \textcolor{comment}{//\ image\ block\ terminator}}
+\DoxyCodeLine{00746\ }
+\DoxyCodeLine{00747\ \ \ \mbox{\hyperlink{gif_8h_a23e287fdaa48ccff1c3ff9500f358c23}{GIF\_TEMP\_FREE}}(codetree);}
+\DoxyCodeLine{00748\ \}}
+\DoxyCodeLine{00749\ }
+\DoxyCodeLine{00750\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\{}
+\DoxyCodeLine{00751\ \ \ FILE*\ \mbox{\hyperlink{structGifWriter_a241c49c94cac4fa2c84f6f04ece482a2}{f}};}
+\DoxyCodeLine{00752\ \ \ uint8\_t*\ \mbox{\hyperlink{structGifWriter_a26d40f7afd54139c37e099911b506812}{oldImage}};}
+\DoxyCodeLine{00753\ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{structGifWriter_aa821030c1f12ceeed53b5f3a74315a43}{firstFrame}};}
+\DoxyCodeLine{00754\ \}\ \mbox{\hyperlink{structGifWriter}{GifWriter}};}
+\DoxyCodeLine{00755\ }
+\DoxyCodeLine{00756\ \textcolor{comment}{//\ Creates\ a\ gif\ file.}}
+\DoxyCodeLine{00757\ \textcolor{comment}{//\ The\ input\ GIFWriter\ is\ assumed\ to\ be\ uninitialized.}}
+\DoxyCodeLine{00758\ \textcolor{comment}{//\ The\ delay\ value\ is\ the\ time\ between\ frames\ in\ hundredths\ of\ a\ second\ -\/\ note}}
+\DoxyCodeLine{00759\ \textcolor{comment}{//\ that\ not\ all\ viewers\ pay\ much\ attention\ to\ this\ value.}}
+\DoxyCodeLine{00760\ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{gif_8h_a6a3654f7bc6d4b3366af7f6d9c3188f0}{GifBegin}}(\mbox{\hyperlink{structGifWriter}{GifWriter}}*\ writer,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ filename,\ uint32\_t\ width,}
+\DoxyCodeLine{00761\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint32\_t\ height,\ uint32\_t\ delay,\ int32\_t\ bitDepth\ =\ 8,}
+\DoxyCodeLine{00762\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ dither\ =\ \textcolor{keyword}{false})\ \{}
+\DoxyCodeLine{00763\ \ \ (void)bitDepth;}
+\DoxyCodeLine{00764\ \ \ (void)dither;\ \ \textcolor{comment}{//\ Mute\ "{}Unused\ argument"{}\ warnings}}
+\DoxyCodeLine{00765\ \textcolor{preprocessor}{\#if\ defined(\_MSC\_VER)\ \&\&\ (\_MSC\_VER\ >=\ 1400)}}
+\DoxyCodeLine{00766\ \ \ writer-\/>\mbox{\hyperlink{structGifWriter_a241c49c94cac4fa2c84f6f04ece482a2}{f}}\ =\ 0;}
+\DoxyCodeLine{00767\ \ \ fopen\_s(\&writer-\/>\mbox{\hyperlink{structGifWriter_a241c49c94cac4fa2c84f6f04ece482a2}{f}},\ filename,\ \textcolor{stringliteral}{"{}wb"{}});}
+\DoxyCodeLine{00768\ \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{00769\ \ \ writer-\/>\mbox{\hyperlink{structGifWriter_a241c49c94cac4fa2c84f6f04ece482a2}{f}}\ =\ fopen(filename,\ \textcolor{stringliteral}{"{}wb"{}});}
+\DoxyCodeLine{00770\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00771\ \ \ \textcolor{keywordflow}{if}\ (!writer-\/>\mbox{\hyperlink{structGifWriter_a241c49c94cac4fa2c84f6f04ece482a2}{f}})\ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00772\ }
+\DoxyCodeLine{00773\ \ \ writer-\/>\mbox{\hyperlink{structGifWriter_aa821030c1f12ceeed53b5f3a74315a43}{firstFrame}}\ =\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00774\ }
+\DoxyCodeLine{00775\ \ \ \textcolor{comment}{//\ allocate}}
+\DoxyCodeLine{00776\ \ \ writer-\/>\mbox{\hyperlink{structGifWriter_a26d40f7afd54139c37e099911b506812}{oldImage}}\ =\ (uint8\_t*)\mbox{\hyperlink{gif_8h_a05d55b62cb33c1317606fc83b79fbd2d}{GIF\_MALLOC}}(width\ *\ height\ *\ 4);}
+\DoxyCodeLine{00777\ }
+\DoxyCodeLine{00778\ \ \ fputs(\textcolor{stringliteral}{"{}GIF89a"{}},\ writer-\/>\mbox{\hyperlink{structGifWriter_a241c49c94cac4fa2c84f6f04ece482a2}{f}});}
+\DoxyCodeLine{00779\ }
+\DoxyCodeLine{00780\ \ \ \textcolor{comment}{//\ screen\ descriptor}}
+\DoxyCodeLine{00781\ \ \ fputc(width\ \&\ 0xff,\ writer-\/>\mbox{\hyperlink{structGifWriter_a241c49c94cac4fa2c84f6f04ece482a2}{f}});}
+\DoxyCodeLine{00782\ \ \ fputc((width\ >>\ 8)\ \&\ 0xff,\ writer-\/>\mbox{\hyperlink{structGifWriter_a241c49c94cac4fa2c84f6f04ece482a2}{f}});}
+\DoxyCodeLine{00783\ \ \ fputc(height\ \&\ 0xff,\ writer-\/>\mbox{\hyperlink{structGifWriter_a241c49c94cac4fa2c84f6f04ece482a2}{f}});}
+\DoxyCodeLine{00784\ \ \ fputc((height\ >>\ 8)\ \&\ 0xff,\ writer-\/>\mbox{\hyperlink{structGifWriter_a241c49c94cac4fa2c84f6f04ece482a2}{f}});}
+\DoxyCodeLine{00785\ }
+\DoxyCodeLine{00786\ \ \ fputc(0xf0,}
+\DoxyCodeLine{00787\ \ \ \ \ \ \ \ \ writer-\/>\mbox{\hyperlink{structGifWriter_a241c49c94cac4fa2c84f6f04ece482a2}{f}});\ \ \ \ \ \textcolor{comment}{//\ there\ is\ an\ unsorted\ global\ color\ table\ of\ 2\ entries}}
+\DoxyCodeLine{00788\ \ \ fputc(0,\ writer-\/>\mbox{\hyperlink{structGifWriter_a241c49c94cac4fa2c84f6f04ece482a2}{f}});\ \ \textcolor{comment}{//\ background\ color}}
+\DoxyCodeLine{00789\ \ \ fputc(0,\ writer-\/>\mbox{\hyperlink{structGifWriter_a241c49c94cac4fa2c84f6f04ece482a2}{f}});\ \ \textcolor{comment}{//\ pixels\ are\ square\ (we\ need\ to\ specify\ this\ because}}
+\DoxyCodeLine{00790\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ it's\ 1989)}}
+\DoxyCodeLine{00791\ }
+\DoxyCodeLine{00792\ \ \ \textcolor{comment}{//\ now\ the\ "{}global"{}\ palette\ (really\ just\ a\ dummy\ palette)}}
+\DoxyCodeLine{00793\ \ \ \textcolor{comment}{//\ color\ 0:\ black}}
+\DoxyCodeLine{00794\ \ \ fputc(0,\ writer-\/>\mbox{\hyperlink{structGifWriter_a241c49c94cac4fa2c84f6f04ece482a2}{f}});}
+\DoxyCodeLine{00795\ \ \ fputc(0,\ writer-\/>\mbox{\hyperlink{structGifWriter_a241c49c94cac4fa2c84f6f04ece482a2}{f}});}
+\DoxyCodeLine{00796\ \ \ fputc(0,\ writer-\/>\mbox{\hyperlink{structGifWriter_a241c49c94cac4fa2c84f6f04ece482a2}{f}});}
+\DoxyCodeLine{00797\ \ \ \textcolor{comment}{//\ color\ 1:\ also\ black}}
+\DoxyCodeLine{00798\ \ \ fputc(0,\ writer-\/>\mbox{\hyperlink{structGifWriter_a241c49c94cac4fa2c84f6f04ece482a2}{f}});}
+\DoxyCodeLine{00799\ \ \ fputc(0,\ writer-\/>\mbox{\hyperlink{structGifWriter_a241c49c94cac4fa2c84f6f04ece482a2}{f}});}
+\DoxyCodeLine{00800\ \ \ fputc(0,\ writer-\/>\mbox{\hyperlink{structGifWriter_a241c49c94cac4fa2c84f6f04ece482a2}{f}});}
+\DoxyCodeLine{00801\ }
+\DoxyCodeLine{00802\ \ \ \textcolor{keywordflow}{if}\ (delay\ !=\ 0)\ \{}
+\DoxyCodeLine{00803\ \ \ \ \ \textcolor{comment}{//\ animation\ header}}
+\DoxyCodeLine{00804\ \ \ \ \ fputc(0x21,\ writer-\/>\mbox{\hyperlink{structGifWriter_a241c49c94cac4fa2c84f6f04ece482a2}{f}});\ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ extension}}
+\DoxyCodeLine{00805\ \ \ \ \ fputc(0xff,\ writer-\/>\mbox{\hyperlink{structGifWriter_a241c49c94cac4fa2c84f6f04ece482a2}{f}});\ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ application\ specific}}
+\DoxyCodeLine{00806\ \ \ \ \ fputc(11,\ writer-\/>\mbox{\hyperlink{structGifWriter_a241c49c94cac4fa2c84f6f04ece482a2}{f}});\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ length\ 11}}
+\DoxyCodeLine{00807\ \ \ \ \ fputs(\textcolor{stringliteral}{"{}NETSCAPE2.0"{}},\ writer-\/>\mbox{\hyperlink{structGifWriter_a241c49c94cac4fa2c84f6f04ece482a2}{f}});\ \ \textcolor{comment}{//\ yes,\ really}}
+\DoxyCodeLine{00808\ \ \ \ \ fputc(3,\ writer-\/>\mbox{\hyperlink{structGifWriter_a241c49c94cac4fa2c84f6f04ece482a2}{f}});\ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ 3\ bytes\ of\ NETSCAPE2.0\ data}}
+\DoxyCodeLine{00809\ }
+\DoxyCodeLine{00810\ \ \ \ \ fputc(1,\ writer-\/>\mbox{\hyperlink{structGifWriter_a241c49c94cac4fa2c84f6f04ece482a2}{f}});\ \ \textcolor{comment}{//\ JUST\ BECAUSE}}
+\DoxyCodeLine{00811\ \ \ \ \ fputc(0,\ writer-\/>\mbox{\hyperlink{structGifWriter_a241c49c94cac4fa2c84f6f04ece482a2}{f}});\ \ \textcolor{comment}{//\ loop\ infinitely\ (byte\ 0)}}
+\DoxyCodeLine{00812\ \ \ \ \ fputc(0,\ writer-\/>\mbox{\hyperlink{structGifWriter_a241c49c94cac4fa2c84f6f04ece482a2}{f}});\ \ \textcolor{comment}{//\ loop\ infinitely\ (byte\ 1)}}
+\DoxyCodeLine{00813\ }
+\DoxyCodeLine{00814\ \ \ \ \ fputc(0,\ writer-\/>\mbox{\hyperlink{structGifWriter_a241c49c94cac4fa2c84f6f04ece482a2}{f}});\ \ \textcolor{comment}{//\ block\ terminator}}
+\DoxyCodeLine{00815\ \ \ \}}
+\DoxyCodeLine{00816\ }
+\DoxyCodeLine{00817\ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00818\ \}}
+\DoxyCodeLine{00819\ }
+\DoxyCodeLine{00820\ \textcolor{comment}{//\ Writes\ out\ a\ new\ frame\ to\ a\ GIF\ in\ progress.}}
+\DoxyCodeLine{00821\ \textcolor{comment}{//\ The\ GIFWriter\ should\ have\ been\ created\ by\ GIFBegin.}}
+\DoxyCodeLine{00822\ \textcolor{comment}{//\ AFAIK,\ it\ is\ legal\ to\ use\ different\ bit\ depths\ for\ different\ frames\ of\ an}}
+\DoxyCodeLine{00823\ \textcolor{comment}{//\ image\ -\/\ this\ may\ be\ handy\ to\ save\ bits\ in\ animations\ that\ don't\ change\ much.}}
+\DoxyCodeLine{00824\ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{gif_8h_a27b6c046506ff30d7af6335879c467ae}{GifWriteFrame}}(\mbox{\hyperlink{structGifWriter}{GifWriter}}*\ writer,\ \textcolor{keyword}{const}\ uint8\_t*\ image,\ uint32\_t\ width,}
+\DoxyCodeLine{00825\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint32\_t\ height,\ uint32\_t\ delay,\ \textcolor{keywordtype}{int}\ bitDepth\ =\ 8,}
+\DoxyCodeLine{00826\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ dither\ =\ \textcolor{keyword}{false})\ \{}
+\DoxyCodeLine{00827\ \ \ \textcolor{keywordflow}{if}\ (!writer-\/>\mbox{\hyperlink{structGifWriter_a241c49c94cac4fa2c84f6f04ece482a2}{f}})\ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00828\ }
+\DoxyCodeLine{00829\ \ \ \textcolor{keyword}{const}\ uint8\_t*\ oldImage\ =\ writer-\/>\mbox{\hyperlink{structGifWriter_aa821030c1f12ceeed53b5f3a74315a43}{firstFrame}}\ ?\ NULL\ :\ writer-\/>\mbox{\hyperlink{structGifWriter_a26d40f7afd54139c37e099911b506812}{oldImage}};}
+\DoxyCodeLine{00830\ \ \ writer-\/>\mbox{\hyperlink{structGifWriter_aa821030c1f12ceeed53b5f3a74315a43}{firstFrame}}\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00831\ }
+\DoxyCodeLine{00832\ \ \ \mbox{\hyperlink{structGifPalette}{GifPalette}}\ pal;}
+\DoxyCodeLine{00833\ \ \ \mbox{\hyperlink{gif_8h_aa74cf10fec71223e47ef8a2e58f26319}{GifMakePalette}}((dither\ ?\ NULL\ :\ oldImage),\ image,\ width,\ height,\ bitDepth,}
+\DoxyCodeLine{00834\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ dither,\ \&pal);}
+\DoxyCodeLine{00835\ }
+\DoxyCodeLine{00836\ \ \ \textcolor{keywordflow}{if}\ (dither)}
+\DoxyCodeLine{00837\ \ \ \ \ \mbox{\hyperlink{gif_8h_a2af5ec26f052649cc9a44ae8dfee0c71}{GifDitherImage}}(oldImage,\ image,\ writer-\/>\mbox{\hyperlink{structGifWriter_a26d40f7afd54139c37e099911b506812}{oldImage}},\ width,\ height,\ \&pal);}
+\DoxyCodeLine{00838\ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00839\ \ \ \ \ \mbox{\hyperlink{gif_8h_a2731ed1895124d923ccc3657203824b8}{GifThresholdImage}}(oldImage,\ image,\ writer-\/>\mbox{\hyperlink{structGifWriter_a26d40f7afd54139c37e099911b506812}{oldImage}},\ width,\ height,\ \&pal);}
+\DoxyCodeLine{00840\ }
+\DoxyCodeLine{00841\ \ \ \mbox{\hyperlink{gif_8h_a0a0a058533dd6a0cc98c6f094e24c39e}{GifWriteLzwImage}}(writer-\/>\mbox{\hyperlink{structGifWriter_a241c49c94cac4fa2c84f6f04ece482a2}{f}},\ writer-\/>\mbox{\hyperlink{structGifWriter_a26d40f7afd54139c37e099911b506812}{oldImage}},\ 0,\ 0,\ width,\ height,\ delay,}
+\DoxyCodeLine{00842\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \&pal);}
+\DoxyCodeLine{00843\ }
+\DoxyCodeLine{00844\ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00845\ \}}
+\DoxyCodeLine{00846\ }
+\DoxyCodeLine{00847\ \textcolor{comment}{//\ Writes\ the\ EOF\ code,\ closes\ the\ file\ handle,\ and\ frees\ temp\ memory\ used\ by\ a}}
+\DoxyCodeLine{00848\ \textcolor{comment}{//\ GIF.\ Many\ if\ not\ most\ viewers\ will\ still\ display\ a\ GIF\ properly\ if\ the\ EOF}}
+\DoxyCodeLine{00849\ \textcolor{comment}{//\ code\ is\ missing,\ but\ it's\ still\ a\ good\ idea\ to\ write\ it\ out.}}
+\DoxyCodeLine{00850\ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{gif_8h_a5a1f73b78ff2797c80a4727932b9d040}{GifEnd}}(\mbox{\hyperlink{structGifWriter}{GifWriter}}*\ writer)\ \{}
+\DoxyCodeLine{00851\ \ \ \textcolor{keywordflow}{if}\ (!writer-\/>\mbox{\hyperlink{structGifWriter_a241c49c94cac4fa2c84f6f04ece482a2}{f}})\ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00852\ }
+\DoxyCodeLine{00853\ \ \ fputc(0x3b,\ writer-\/>\mbox{\hyperlink{structGifWriter_a241c49c94cac4fa2c84f6f04ece482a2}{f}});\ \ \textcolor{comment}{//\ end\ of\ file}}
+\DoxyCodeLine{00854\ \ \ fclose(writer-\/>\mbox{\hyperlink{structGifWriter_a241c49c94cac4fa2c84f6f04ece482a2}{f}});}
+\DoxyCodeLine{00855\ \ \ \mbox{\hyperlink{gif_8h_a3bc34de883cfe8bc534246ed759419f2}{GIF\_FREE}}(writer-\/>\mbox{\hyperlink{structGifWriter_a26d40f7afd54139c37e099911b506812}{oldImage}});}
+\DoxyCodeLine{00856\ }
+\DoxyCodeLine{00857\ \ \ writer-\/>\mbox{\hyperlink{structGifWriter_a241c49c94cac4fa2c84f6f04ece482a2}{f}}\ =\ NULL;}
+\DoxyCodeLine{00858\ \ \ writer-\/>\mbox{\hyperlink{structGifWriter_a26d40f7afd54139c37e099911b506812}{oldImage}}\ =\ NULL;}
+\DoxyCodeLine{00859\ }
+\DoxyCodeLine{00860\ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00861\ \}}
+\DoxyCodeLine{00862\ }
+\DoxyCodeLine{00863\ \textcolor{preprocessor}{\#endif}}
+
+\end{DoxyCode}

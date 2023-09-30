@@ -1,0 +1,69 @@
+\hypertarget{viewer__back_8h_source}{}\doxysection{viewer\+\_\+back.\+h}
+\label{viewer__back_8h_source}\index{backend/viewer\_back.h@{backend/viewer\_back.h}}
+\mbox{\hyperlink{viewer__back_8h}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ }
+\DoxyCodeLine{00006\ \textcolor{preprocessor}{\#ifndef\ SRC\_BACKEND\_VIEWER\_BACK\_H\_}}
+\DoxyCodeLine{00007\ \textcolor{preprocessor}{\#define\ SRC\_BACKEND\_VIEWER\_BACK\_H\_}}
+\DoxyCodeLine{00008\ }
+\DoxyCodeLine{00009\ \textcolor{preprocessor}{\#include\ <stdio.h>}}
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#include\ <string.h>}}
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#include\ <stdlib.h>}}
+\DoxyCodeLine{00012\ \textcolor{preprocessor}{\#include\ <math.h>}}
+\DoxyCodeLine{00013\ }
+\DoxyCodeLine{00018\ \textcolor{preprocessor}{\#define\ MAXN\ 2048}}
+\DoxyCodeLine{00019\ }
+\DoxyCodeLine{00024\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structs21__pair__unsigned__int}{s21\_pair\_unsigned\_int}}\ \{}
+\DoxyCodeLine{00025\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{structs21__pair__unsigned__int_a7ef27cf9210a43519e44fe220095aa31}{first}},\ \mbox{\hyperlink{structs21__pair__unsigned__int_a98b6cfa6bf300a52c0557c15d8fea365}{second}};\ }
+\DoxyCodeLine{00026\ \}\ \mbox{\hyperlink{viewer__back_8h_a140b73710213ab09419d51f7c89e4a72}{puui}};}
+\DoxyCodeLine{00027\ }
+\DoxyCodeLine{00032\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structs21__xyz__structure}{s21\_xyz\_structure}}\ \{}
+\DoxyCodeLine{00033\ \ \ \ \ \textcolor{keywordtype}{float}\ \mbox{\hyperlink{structs21__xyz__structure_ad530f1e3e089a840973c53cd644c3a70}{x}},\ \mbox{\hyperlink{structs21__xyz__structure_a7b5cddde4f0c704d54ed4904a76e5fa7}{y}},\ \mbox{\hyperlink{structs21__xyz__structure_a39cb2283ae9750c4b12b1cd2ac97db4d}{z}};\ }
+\DoxyCodeLine{00034\ \}\ \mbox{\hyperlink{viewer__back_8h_a208a78d63f4afe1839b68cd484bb9aeb}{p3f}};}
+\DoxyCodeLine{00035\ }
+\DoxyCodeLine{00040\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structfacets}{facets}}\ \{}
+\DoxyCodeLine{00041\ \ \ \ \ \mbox{\hyperlink{structs21__pair__unsigned__int}{puui}}\ *\mbox{\hyperlink{structfacets_a8a88831301bba59d8e9ccc8f73dd26b1}{f}};\ }
+\DoxyCodeLine{00042\ \ \ \ \ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{structfacets_a2423e3a243c30cc873a5968d26836357}{sz}};\ \ }
+\DoxyCodeLine{00043\ \}\ \mbox{\hyperlink{viewer__back_8h_a962f22911094b1c2113f809255066209}{facets\_t}};}
+\DoxyCodeLine{00044\ }
+\DoxyCodeLine{00049\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structvertexes}{vertexes}}\ \{}
+\DoxyCodeLine{00050\ \ \ \ \ \mbox{\hyperlink{structs21__xyz__structure}{p3f}}\ *\mbox{\hyperlink{structvertexes_abfb330e86f7148096184cf791fa0680d}{v}};\ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00051\ \ \ \ \ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{structvertexes_ab86df52650dca0439a3b545f379f4bd7}{sz}};\ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00052\ \ \ \ \ \textcolor{keywordtype}{float}\ \mbox{\hyperlink{structvertexes_a21c829d592d0710cb4a3646faa662154}{max\_len}};\ }
+\DoxyCodeLine{00053\ \}\ \mbox{\hyperlink{viewer__back_8h_ae063168c61ca691d48441e61cb5f3b95}{vertexes\_t}};}
+\DoxyCodeLine{00054\ }
+\DoxyCodeLine{00060\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{viewer__back_8h_a5d123eae61d07b5f9a37d3b7f83eec41}{isDigit}}(\textcolor{keywordtype}{char}\ c);}
+\DoxyCodeLine{00061\ }
+\DoxyCodeLine{00068\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{viewer__back_8h_a58c3a8a45927bd0a2c93d6298c60992c}{convert\_string\_to\_number}}(\textcolor{keywordtype}{char}\ str[],\ \textcolor{keywordtype}{int}\ *pos,\ \textcolor{keywordtype}{char}\ ans[]);}
+\DoxyCodeLine{00069\ }
+\DoxyCodeLine{00076\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{viewer__back_8h_a5017f44f3f74d9c20d50712dd78d85ec}{get\_cnt\_char\_obj}}(\textcolor{keywordtype}{char}*\ path,\ \textcolor{keywordtype}{char}\ c);}
+\DoxyCodeLine{00077\ }
+\DoxyCodeLine{00084\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{viewer__back_8h_a783521bda89ee58040514405422a943a}{get\_cnt\_num\_in\_line\_obj}}(\textcolor{keywordtype}{char}*\ path,\ \textcolor{keywordtype}{char}\ c);}
+\DoxyCodeLine{00085\ }
+\DoxyCodeLine{00091\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{viewer__back_8h_ad878762be93a98c0c4c24c43f45f56bf}{init\_vertex}}(\mbox{\hyperlink{structvertexes}{vertexes\_t}}\ *vv,\ \textcolor{keywordtype}{int}\ cnt\_v);}
+\DoxyCodeLine{00092\ }
+\DoxyCodeLine{00097\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{viewer__back_8h_ad4b05584aa5a1fd434ac6fc993605c09}{clear\_vertex}}(\mbox{\hyperlink{structvertexes}{vertexes\_t}}\ *vv);}
+\DoxyCodeLine{00098\ }
+\DoxyCodeLine{00104\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{viewer__back_8h_a0b2816cd51c21247480398e53c599bdf}{init\_facets}}(\mbox{\hyperlink{structfacets}{facets\_t}}\ *ff,\ \textcolor{keywordtype}{int}\ cnt\_l\_f);}
+\DoxyCodeLine{00105\ }
+\DoxyCodeLine{00110\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{viewer__back_8h_af8d69c845e993870abddca90e7b1864b}{clear\_facets}}(\mbox{\hyperlink{structfacets}{facets\_t}}\ *ff);}
+\DoxyCodeLine{00111\ }
+\DoxyCodeLine{00118\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{viewer__back_8h_ab1e87c2d2ca9ba1fcc9676b73b24232e}{read\_obj}}(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ path,\ \mbox{\hyperlink{structvertexes}{vertexes\_t}}\ *vv,\ \mbox{\hyperlink{structfacets}{facets\_t}}\ *ff);}
+\DoxyCodeLine{00119\ }
+\DoxyCodeLine{00125\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{viewer__back_8h_ac390ce4ae20a0fc7bda1de893891e545}{scale}}(\mbox{\hyperlink{structvertexes}{vertexes\_t}}\ *vv,\ \textcolor{keywordtype}{float}\ multiplier);}
+\DoxyCodeLine{00126\ }
+\DoxyCodeLine{00134\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{viewer__back_8h_a4f3dfd4bc14e7678199c5aa9f28c195a}{shift}}(\mbox{\hyperlink{structvertexes}{vertexes\_t}}\ *vv,\ \textcolor{keywordtype}{float}\ dx,\ \textcolor{keywordtype}{float}\ dy,\ \textcolor{keywordtype}{float}\ dz);}
+\DoxyCodeLine{00135\ }
+\DoxyCodeLine{00141\ \mbox{\hyperlink{structp3f}{p3f}}\ \mbox{\hyperlink{viewer__back_8h_ad968f45d9c2c12d4a568a23c8afcff7a}{calc\_center}}(\mbox{\hyperlink{structvertexes}{vertexes\_t}}\ *vv);}
+\DoxyCodeLine{00142\ }
+\DoxyCodeLine{00148\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{viewer__back_8h_af1cdb7c7b6db3575bba36dd3f31c4d2b}{rotate\_x}}(\mbox{\hyperlink{structvertexes}{vertexes\_t}}\ *vv,\ \textcolor{keywordtype}{float}\ angle);}
+\DoxyCodeLine{00149\ }
+\DoxyCodeLine{00155\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{viewer__back_8h_acb7bfe0656b75f11c596bac8af14149c}{rotate\_y}}(\mbox{\hyperlink{structvertexes}{vertexes\_t}}\ *vv,\ \textcolor{keywordtype}{float}\ angle);}
+\DoxyCodeLine{00156\ }
+\DoxyCodeLine{00162\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{viewer__back_8h_a4e7fc7dc296ca5ffd67b43c9ea3f877f}{rotate\_z}}(\mbox{\hyperlink{structvertexes}{vertexes\_t}}\ *vv,\ \textcolor{keywordtype}{float}\ angle);}
+\DoxyCodeLine{00163\ }
+\DoxyCodeLine{00170\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{viewer__back_8h_a7db9c8df39fbbe0620435983d1889c5d}{rotate}}(\mbox{\hyperlink{structvertexes}{vertexes\_t}}\ *vv,\ \textcolor{keywordtype}{char}\ axis,\ \textcolor{keywordtype}{float}\ angle);}
+\DoxyCodeLine{00171\ }
+\DoxyCodeLine{00172\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{//\ SRC\_BACKEND\_VIEWER\_BACK\_H\_}}
+
+\end{DoxyCode}

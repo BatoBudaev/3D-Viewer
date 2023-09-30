@@ -1,0 +1,306 @@
+\hypertarget{gif_8h}{}\doxysection{QT3\+DViewer/gif.h File Reference}
+\label{gif_8h}\index{QT3DViewer/gif.h@{QT3DViewer/gif.h}}
+
+
+Заголовочный файл, содержащий объявления функций и структур данных работы с gif.  
+
+
+{\ttfamily \#include $<$stdbool.\+h$>$}\newline
+{\ttfamily \#include $<$stdint.\+h$>$}\newline
+{\ttfamily \#include $<$stdio.\+h$>$}\newline
+{\ttfamily \#include $<$string.\+h$>$}\newline
+{\ttfamily \#include $<$stdlib.\+h$>$}\newline
+\doxysubsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+struct \mbox{\hyperlink{structGifPalette}{Gif\+Palette}}
+\begin{DoxyCompactList}\small\item\em Структура, представляющая палитру GIF изображения. \end{DoxyCompactList}\item 
+struct \mbox{\hyperlink{structGifBitStatus}{Gif\+Bit\+Status}}
+\item 
+struct \mbox{\hyperlink{structGifLzwNode}{Gif\+Lzw\+Node}}
+\item 
+struct \mbox{\hyperlink{structGifWriter}{Gif\+Writer}}
+\end{DoxyCompactItemize}
+\doxysubsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\#define \mbox{\hyperlink{gif_8h_a94974606594583031e18618c12dfd1eb}{GIF\+\_\+\+TEMP\+\_\+\+MALLOC}}~malloc
+\begin{DoxyCompactList}\small\item\em Макрос для пользовательского выделения временной памяти. \end{DoxyCompactList}\item 
+\#define \mbox{\hyperlink{gif_8h_a23e287fdaa48ccff1c3ff9500f358c23}{GIF\+\_\+\+TEMP\+\_\+\+FREE}}~free
+\begin{DoxyCompactList}\small\item\em Макрос для освобождения временной памяти. \end{DoxyCompactList}\item 
+\#define \mbox{\hyperlink{gif_8h_a05d55b62cb33c1317606fc83b79fbd2d}{GIF\+\_\+\+MALLOC}}~malloc
+\begin{DoxyCompactList}\small\item\em Макрос для выделения памяти. \end{DoxyCompactList}\item 
+\#define \mbox{\hyperlink{gif_8h_a3bc34de883cfe8bc534246ed759419f2}{GIF\+\_\+\+FREE}}~free
+\begin{DoxyCompactList}\small\item\em Макрос для освобождения памяти. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+int \mbox{\hyperlink{gif_8h_abec89660e26d5d306a68352215b9a0be}{Gif\+IMax}} (int l, int r)
+\begin{DoxyCompactList}\small\item\em Функция для нахождения максимального из двух чисел. \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{gif_8h_ab9dd9d911741bf4964afc6365ee09314}{Gif\+IMin}} (int l, int r)
+\begin{DoxyCompactList}\small\item\em Функция для нахождения минимального из двух чисел. \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{gif_8h_a3f47fdcc507db606e3817489e15389bf}{Gif\+IAbs}} (int i)
+\begin{DoxyCompactList}\small\item\em Функция для нахождения абсолютного значения числа. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{gif_8h_a17526c4fd7bdc86c779c6253279abee5}{Gif\+Get\+Closest\+Palette\+Color}} (\mbox{\hyperlink{structGifPalette}{Gif\+Palette}} $\ast$p\+Pal, int r, int g, int b, int $\ast$best\+Ind, int $\ast$best\+Diff, int tree\+Root)
+\item 
+void \mbox{\hyperlink{gif_8h_a6df6365a4dbdd83db88521f7159af7f7}{Gif\+Swap\+Pixels}} (uint8\+\_\+t $\ast$image, int pixA, int pixB)
+\item 
+int \mbox{\hyperlink{gif_8h_a5d40946fe75133f3be72b4e4d096b776}{Gif\+Partition}} (uint8\+\_\+t $\ast$image, const int left, const int right, const int elt, int pivot\+Index)
+\item 
+void \mbox{\hyperlink{gif_8h_aa3789c1923f40cb85ccccca4fcdae41c}{Gif\+Partition\+By\+Median}} (uint8\+\_\+t $\ast$image, int left, int right, int com, int needed\+Center)
+\item 
+void \mbox{\hyperlink{gif_8h_ace441d978463380721538e95c029ee71}{Gif\+Split\+Palette}} (uint8\+\_\+t $\ast$image, int num\+Pixels, int first\+Elt, int last\+Elt, int split\+Elt, int split\+Dist, int tree\+Node, bool build\+For\+Dither, \mbox{\hyperlink{structGifPalette}{Gif\+Palette}} $\ast$pal)
+\item 
+int \mbox{\hyperlink{gif_8h_abb04d8e237daeb334a82c9d9600e42c1}{Gif\+Pick\+Changed\+Pixels}} (const uint8\+\_\+t $\ast$last\+Frame, uint8\+\_\+t $\ast$frame, int num\+Pixels)
+\item 
+void \mbox{\hyperlink{gif_8h_aa74cf10fec71223e47ef8a2e58f26319}{Gif\+Make\+Palette}} (const uint8\+\_\+t $\ast$last\+Frame, const uint8\+\_\+t $\ast$next\+Frame, uint32\+\_\+t width, uint32\+\_\+t height, int bit\+Depth, bool build\+For\+Dither, \mbox{\hyperlink{structGifPalette}{Gif\+Palette}} $\ast$p\+Pal)
+\item 
+void \mbox{\hyperlink{gif_8h_a2af5ec26f052649cc9a44ae8dfee0c71}{Gif\+Dither\+Image}} (const uint8\+\_\+t $\ast$last\+Frame, const uint8\+\_\+t $\ast$next\+Frame, uint8\+\_\+t $\ast$out\+Frame, uint32\+\_\+t width, uint32\+\_\+t height, \mbox{\hyperlink{structGifPalette}{Gif\+Palette}} $\ast$p\+Pal)
+\item 
+void \mbox{\hyperlink{gif_8h_a2731ed1895124d923ccc3657203824b8}{Gif\+Threshold\+Image}} (const uint8\+\_\+t $\ast$last\+Frame, const uint8\+\_\+t $\ast$next\+Frame, uint8\+\_\+t $\ast$out\+Frame, uint32\+\_\+t width, uint32\+\_\+t height, \mbox{\hyperlink{structGifPalette}{Gif\+Palette}} $\ast$p\+Pal)
+\item 
+void \mbox{\hyperlink{gif_8h_a1bef4f7413c37a9b37b49293d3aef201}{Gif\+Write\+Bit}} (\mbox{\hyperlink{structGifBitStatus}{Gif\+Bit\+Status}} $\ast$stat, uint32\+\_\+t bit)
+\item 
+void \mbox{\hyperlink{gif_8h_a56779e2201dcfb75425c2a9563360189}{Gif\+Write\+Chunk}} (FILE $\ast$f, \mbox{\hyperlink{structGifBitStatus}{Gif\+Bit\+Status}} $\ast$stat)
+\item 
+void \mbox{\hyperlink{gif_8h_a8707778c428e9de1d108e5eb79c2c008}{Gif\+Write\+Code}} (FILE $\ast$f, \mbox{\hyperlink{structGifBitStatus}{Gif\+Bit\+Status}} $\ast$stat, uint32\+\_\+t code, uint32\+\_\+t length)
+\item 
+void \mbox{\hyperlink{gif_8h_a0e05fd556ad17a66a43f76a501fcff53}{Gif\+Write\+Palette}} (const \mbox{\hyperlink{structGifPalette}{Gif\+Palette}} $\ast$p\+Pal, FILE $\ast$f)
+\item 
+void \mbox{\hyperlink{gif_8h_a0a0a058533dd6a0cc98c6f094e24c39e}{Gif\+Write\+Lzw\+Image}} (FILE $\ast$f, uint8\+\_\+t $\ast$image, uint32\+\_\+t left, uint32\+\_\+t top, uint32\+\_\+t width, uint32\+\_\+t height, uint32\+\_\+t delay, \mbox{\hyperlink{structGifPalette}{Gif\+Palette}} $\ast$p\+Pal)
+\item 
+bool \mbox{\hyperlink{gif_8h_a6a3654f7bc6d4b3366af7f6d9c3188f0}{Gif\+Begin}} (\mbox{\hyperlink{structGifWriter}{Gif\+Writer}} $\ast$writer, const char $\ast$filename, uint32\+\_\+t width, uint32\+\_\+t height, uint32\+\_\+t delay, int32\+\_\+t bit\+Depth=8, bool dither=false)
+\item 
+bool \mbox{\hyperlink{gif_8h_a27b6c046506ff30d7af6335879c467ae}{Gif\+Write\+Frame}} (\mbox{\hyperlink{structGifWriter}{Gif\+Writer}} $\ast$writer, const uint8\+\_\+t $\ast$image, uint32\+\_\+t width, uint32\+\_\+t height, uint32\+\_\+t delay, int bit\+Depth=8, bool dither=false)
+\item 
+bool \mbox{\hyperlink{gif_8h_a5a1f73b78ff2797c80a4727932b9d040}{Gif\+End}} (\mbox{\hyperlink{structGifWriter}{Gif\+Writer}} $\ast$writer)
+\end{DoxyCompactItemize}
+\doxysubsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+const int \mbox{\hyperlink{gif_8h_a3bbc4876f24cc742e2cbb68fa3c88fe9}{k\+Gif\+Trans\+Index}} = 0
+\begin{DoxyCompactList}\small\item\em Индекс прозрачного цвета в палитре GIF изображения. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Заголовочный файл, содержащий объявления функций и структур данных работы с gif. 
+
+
+
+\doxysubsection{Macro Definition Documentation}
+\mbox{\Hypertarget{gif_8h_a3bc34de883cfe8bc534246ed759419f2}\label{gif_8h_a3bc34de883cfe8bc534246ed759419f2}} 
+\index{gif.h@{gif.h}!GIF\_FREE@{GIF\_FREE}}
+\index{GIF\_FREE@{GIF\_FREE}!gif.h@{gif.h}}
+\doxysubsubsection{\texorpdfstring{GIF\_FREE}{GIF\_FREE}}
+{\footnotesize\ttfamily \#define GIF\+\_\+\+FREE~free}
+
+
+
+Макрос для освобождения памяти. 
+
+Этот макрос используется только в функции Gif\+End для освобождения буфера размером изображения, выделенного функцией Gif\+Begin. \mbox{\Hypertarget{gif_8h_a05d55b62cb33c1317606fc83b79fbd2d}\label{gif_8h_a05d55b62cb33c1317606fc83b79fbd2d}} 
+\index{gif.h@{gif.h}!GIF\_MALLOC@{GIF\_MALLOC}}
+\index{GIF\_MALLOC@{GIF\_MALLOC}!gif.h@{gif.h}}
+\doxysubsubsection{\texorpdfstring{GIF\_MALLOC}{GIF\_MALLOC}}
+{\footnotesize\ttfamily \#define GIF\+\_\+\+MALLOC~malloc}
+
+
+
+Макрос для выделения памяти. 
+
+Этот макрос используется только в функции Gif\+Begin для выделения буфера размером изображения, который используется для выявления измененных пикселей при дельта-\/кодировании. \mbox{\Hypertarget{gif_8h_a23e287fdaa48ccff1c3ff9500f358c23}\label{gif_8h_a23e287fdaa48ccff1c3ff9500f358c23}} 
+\index{gif.h@{gif.h}!GIF\_TEMP\_FREE@{GIF\_TEMP\_FREE}}
+\index{GIF\_TEMP\_FREE@{GIF\_TEMP\_FREE}!gif.h@{gif.h}}
+\doxysubsubsection{\texorpdfstring{GIF\_TEMP\_FREE}{GIF\_TEMP\_FREE}}
+{\footnotesize\ttfamily \#define GIF\+\_\+\+TEMP\+\_\+\+FREE~free}
+
+
+
+Макрос для освобождения временной памяти. 
+
+Если вы хотите использовать собственный аллокатор памяти, переопределите этот макрос перед включением этого заголовочного файла. По умолчанию используется стандартная функция free. \mbox{\Hypertarget{gif_8h_a94974606594583031e18618c12dfd1eb}\label{gif_8h_a94974606594583031e18618c12dfd1eb}} 
+\index{gif.h@{gif.h}!GIF\_TEMP\_MALLOC@{GIF\_TEMP\_MALLOC}}
+\index{GIF\_TEMP\_MALLOC@{GIF\_TEMP\_MALLOC}!gif.h@{gif.h}}
+\doxysubsubsection{\texorpdfstring{GIF\_TEMP\_MALLOC}{GIF\_TEMP\_MALLOC}}
+{\footnotesize\ttfamily \#define GIF\+\_\+\+TEMP\+\_\+\+MALLOC~malloc}
+
+
+
+Макрос для пользовательского выделения временной памяти. 
+
+Если вы хотите использовать собственный аллокатор памяти, переопределите этот макрос перед включением этого заголовочного файла. По умолчанию используется стандартная функция malloc. 
+
+\doxysubsection{Function Documentation}
+\mbox{\Hypertarget{gif_8h_a6a3654f7bc6d4b3366af7f6d9c3188f0}\label{gif_8h_a6a3654f7bc6d4b3366af7f6d9c3188f0}} 
+\index{gif.h@{gif.h}!GifBegin@{GifBegin}}
+\index{GifBegin@{GifBegin}!gif.h@{gif.h}}
+\doxysubsubsection{\texorpdfstring{GifBegin()}{GifBegin()}}
+{\footnotesize\ttfamily bool Gif\+Begin (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structGifWriter}{Gif\+Writer}} $\ast$}]{writer,  }\item[{const char $\ast$}]{filename,  }\item[{uint32\+\_\+t}]{width,  }\item[{uint32\+\_\+t}]{height,  }\item[{uint32\+\_\+t}]{delay,  }\item[{int32\+\_\+t}]{bit\+Depth = {\ttfamily 8},  }\item[{bool}]{dither = {\ttfamily false} }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{gif_8h_a2af5ec26f052649cc9a44ae8dfee0c71}\label{gif_8h_a2af5ec26f052649cc9a44ae8dfee0c71}} 
+\index{gif.h@{gif.h}!GifDitherImage@{GifDitherImage}}
+\index{GifDitherImage@{GifDitherImage}!gif.h@{gif.h}}
+\doxysubsubsection{\texorpdfstring{GifDitherImage()}{GifDitherImage()}}
+{\footnotesize\ttfamily void Gif\+Dither\+Image (\begin{DoxyParamCaption}\item[{const uint8\+\_\+t $\ast$}]{last\+Frame,  }\item[{const uint8\+\_\+t $\ast$}]{next\+Frame,  }\item[{uint8\+\_\+t $\ast$}]{out\+Frame,  }\item[{uint32\+\_\+t}]{width,  }\item[{uint32\+\_\+t}]{height,  }\item[{\mbox{\hyperlink{structGifPalette}{Gif\+Palette}} $\ast$}]{p\+Pal }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{gif_8h_a5a1f73b78ff2797c80a4727932b9d040}\label{gif_8h_a5a1f73b78ff2797c80a4727932b9d040}} 
+\index{gif.h@{gif.h}!GifEnd@{GifEnd}}
+\index{GifEnd@{GifEnd}!gif.h@{gif.h}}
+\doxysubsubsection{\texorpdfstring{GifEnd()}{GifEnd()}}
+{\footnotesize\ttfamily bool Gif\+End (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structGifWriter}{Gif\+Writer}} $\ast$}]{writer }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{gif_8h_a17526c4fd7bdc86c779c6253279abee5}\label{gif_8h_a17526c4fd7bdc86c779c6253279abee5}} 
+\index{gif.h@{gif.h}!GifGetClosestPaletteColor@{GifGetClosestPaletteColor}}
+\index{GifGetClosestPaletteColor@{GifGetClosestPaletteColor}!gif.h@{gif.h}}
+\doxysubsubsection{\texorpdfstring{GifGetClosestPaletteColor()}{GifGetClosestPaletteColor()}}
+{\footnotesize\ttfamily void Gif\+Get\+Closest\+Palette\+Color (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structGifPalette}{Gif\+Palette}} $\ast$}]{p\+Pal,  }\item[{int}]{r,  }\item[{int}]{g,  }\item[{int}]{b,  }\item[{int $\ast$}]{best\+Ind,  }\item[{int $\ast$}]{best\+Diff,  }\item[{int}]{tree\+Root }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{gif_8h_a3f47fdcc507db606e3817489e15389bf}\label{gif_8h_a3f47fdcc507db606e3817489e15389bf}} 
+\index{gif.h@{gif.h}!GifIAbs@{GifIAbs}}
+\index{GifIAbs@{GifIAbs}!gif.h@{gif.h}}
+\doxysubsubsection{\texorpdfstring{GifIAbs()}{GifIAbs()}}
+{\footnotesize\ttfamily int Gif\+IAbs (\begin{DoxyParamCaption}\item[{int}]{i }\end{DoxyParamCaption})}
+
+
+
+Функция для нахождения абсолютного значения числа. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em i} & Число. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Абсолютное значение числа. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{gif_8h_abec89660e26d5d306a68352215b9a0be}\label{gif_8h_abec89660e26d5d306a68352215b9a0be}} 
+\index{gif.h@{gif.h}!GifIMax@{GifIMax}}
+\index{GifIMax@{GifIMax}!gif.h@{gif.h}}
+\doxysubsubsection{\texorpdfstring{GifIMax()}{GifIMax()}}
+{\footnotesize\ttfamily int Gif\+IMax (\begin{DoxyParamCaption}\item[{int}]{l,  }\item[{int}]{r }\end{DoxyParamCaption})}
+
+
+
+Функция для нахождения максимального из двух чисел. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em l} & Первое число. \\
+\hline
+{\em r} & Второе число. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Максимальное число. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{gif_8h_ab9dd9d911741bf4964afc6365ee09314}\label{gif_8h_ab9dd9d911741bf4964afc6365ee09314}} 
+\index{gif.h@{gif.h}!GifIMin@{GifIMin}}
+\index{GifIMin@{GifIMin}!gif.h@{gif.h}}
+\doxysubsubsection{\texorpdfstring{GifIMin()}{GifIMin()}}
+{\footnotesize\ttfamily int Gif\+IMin (\begin{DoxyParamCaption}\item[{int}]{l,  }\item[{int}]{r }\end{DoxyParamCaption})}
+
+
+
+Функция для нахождения минимального из двух чисел. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em l} & Первое число. \\
+\hline
+{\em r} & Второе число. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Минимальное число. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{gif_8h_aa74cf10fec71223e47ef8a2e58f26319}\label{gif_8h_aa74cf10fec71223e47ef8a2e58f26319}} 
+\index{gif.h@{gif.h}!GifMakePalette@{GifMakePalette}}
+\index{GifMakePalette@{GifMakePalette}!gif.h@{gif.h}}
+\doxysubsubsection{\texorpdfstring{GifMakePalette()}{GifMakePalette()}}
+{\footnotesize\ttfamily void Gif\+Make\+Palette (\begin{DoxyParamCaption}\item[{const uint8\+\_\+t $\ast$}]{last\+Frame,  }\item[{const uint8\+\_\+t $\ast$}]{next\+Frame,  }\item[{uint32\+\_\+t}]{width,  }\item[{uint32\+\_\+t}]{height,  }\item[{int}]{bit\+Depth,  }\item[{bool}]{build\+For\+Dither,  }\item[{\mbox{\hyperlink{structGifPalette}{Gif\+Palette}} $\ast$}]{p\+Pal }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{gif_8h_a5d40946fe75133f3be72b4e4d096b776}\label{gif_8h_a5d40946fe75133f3be72b4e4d096b776}} 
+\index{gif.h@{gif.h}!GifPartition@{GifPartition}}
+\index{GifPartition@{GifPartition}!gif.h@{gif.h}}
+\doxysubsubsection{\texorpdfstring{GifPartition()}{GifPartition()}}
+{\footnotesize\ttfamily int Gif\+Partition (\begin{DoxyParamCaption}\item[{uint8\+\_\+t $\ast$}]{image,  }\item[{const int}]{left,  }\item[{const int}]{right,  }\item[{const int}]{elt,  }\item[{int}]{pivot\+Index }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{gif_8h_aa3789c1923f40cb85ccccca4fcdae41c}\label{gif_8h_aa3789c1923f40cb85ccccca4fcdae41c}} 
+\index{gif.h@{gif.h}!GifPartitionByMedian@{GifPartitionByMedian}}
+\index{GifPartitionByMedian@{GifPartitionByMedian}!gif.h@{gif.h}}
+\doxysubsubsection{\texorpdfstring{GifPartitionByMedian()}{GifPartitionByMedian()}}
+{\footnotesize\ttfamily void Gif\+Partition\+By\+Median (\begin{DoxyParamCaption}\item[{uint8\+\_\+t $\ast$}]{image,  }\item[{int}]{left,  }\item[{int}]{right,  }\item[{int}]{com,  }\item[{int}]{needed\+Center }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{gif_8h_abb04d8e237daeb334a82c9d9600e42c1}\label{gif_8h_abb04d8e237daeb334a82c9d9600e42c1}} 
+\index{gif.h@{gif.h}!GifPickChangedPixels@{GifPickChangedPixels}}
+\index{GifPickChangedPixels@{GifPickChangedPixels}!gif.h@{gif.h}}
+\doxysubsubsection{\texorpdfstring{GifPickChangedPixels()}{GifPickChangedPixels()}}
+{\footnotesize\ttfamily int Gif\+Pick\+Changed\+Pixels (\begin{DoxyParamCaption}\item[{const uint8\+\_\+t $\ast$}]{last\+Frame,  }\item[{uint8\+\_\+t $\ast$}]{frame,  }\item[{int}]{num\+Pixels }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{gif_8h_ace441d978463380721538e95c029ee71}\label{gif_8h_ace441d978463380721538e95c029ee71}} 
+\index{gif.h@{gif.h}!GifSplitPalette@{GifSplitPalette}}
+\index{GifSplitPalette@{GifSplitPalette}!gif.h@{gif.h}}
+\doxysubsubsection{\texorpdfstring{GifSplitPalette()}{GifSplitPalette()}}
+{\footnotesize\ttfamily void Gif\+Split\+Palette (\begin{DoxyParamCaption}\item[{uint8\+\_\+t $\ast$}]{image,  }\item[{int}]{num\+Pixels,  }\item[{int}]{first\+Elt,  }\item[{int}]{last\+Elt,  }\item[{int}]{split\+Elt,  }\item[{int}]{split\+Dist,  }\item[{int}]{tree\+Node,  }\item[{bool}]{build\+For\+Dither,  }\item[{\mbox{\hyperlink{structGifPalette}{Gif\+Palette}} $\ast$}]{pal }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{gif_8h_a6df6365a4dbdd83db88521f7159af7f7}\label{gif_8h_a6df6365a4dbdd83db88521f7159af7f7}} 
+\index{gif.h@{gif.h}!GifSwapPixels@{GifSwapPixels}}
+\index{GifSwapPixels@{GifSwapPixels}!gif.h@{gif.h}}
+\doxysubsubsection{\texorpdfstring{GifSwapPixels()}{GifSwapPixels()}}
+{\footnotesize\ttfamily void Gif\+Swap\+Pixels (\begin{DoxyParamCaption}\item[{uint8\+\_\+t $\ast$}]{image,  }\item[{int}]{pixA,  }\item[{int}]{pixB }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{gif_8h_a2731ed1895124d923ccc3657203824b8}\label{gif_8h_a2731ed1895124d923ccc3657203824b8}} 
+\index{gif.h@{gif.h}!GifThresholdImage@{GifThresholdImage}}
+\index{GifThresholdImage@{GifThresholdImage}!gif.h@{gif.h}}
+\doxysubsubsection{\texorpdfstring{GifThresholdImage()}{GifThresholdImage()}}
+{\footnotesize\ttfamily void Gif\+Threshold\+Image (\begin{DoxyParamCaption}\item[{const uint8\+\_\+t $\ast$}]{last\+Frame,  }\item[{const uint8\+\_\+t $\ast$}]{next\+Frame,  }\item[{uint8\+\_\+t $\ast$}]{out\+Frame,  }\item[{uint32\+\_\+t}]{width,  }\item[{uint32\+\_\+t}]{height,  }\item[{\mbox{\hyperlink{structGifPalette}{Gif\+Palette}} $\ast$}]{p\+Pal }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{gif_8h_a1bef4f7413c37a9b37b49293d3aef201}\label{gif_8h_a1bef4f7413c37a9b37b49293d3aef201}} 
+\index{gif.h@{gif.h}!GifWriteBit@{GifWriteBit}}
+\index{GifWriteBit@{GifWriteBit}!gif.h@{gif.h}}
+\doxysubsubsection{\texorpdfstring{GifWriteBit()}{GifWriteBit()}}
+{\footnotesize\ttfamily void Gif\+Write\+Bit (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structGifBitStatus}{Gif\+Bit\+Status}} $\ast$}]{stat,  }\item[{uint32\+\_\+t}]{bit }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{gif_8h_a56779e2201dcfb75425c2a9563360189}\label{gif_8h_a56779e2201dcfb75425c2a9563360189}} 
+\index{gif.h@{gif.h}!GifWriteChunk@{GifWriteChunk}}
+\index{GifWriteChunk@{GifWriteChunk}!gif.h@{gif.h}}
+\doxysubsubsection{\texorpdfstring{GifWriteChunk()}{GifWriteChunk()}}
+{\footnotesize\ttfamily void Gif\+Write\+Chunk (\begin{DoxyParamCaption}\item[{FILE $\ast$}]{f,  }\item[{\mbox{\hyperlink{structGifBitStatus}{Gif\+Bit\+Status}} $\ast$}]{stat }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{gif_8h_a8707778c428e9de1d108e5eb79c2c008}\label{gif_8h_a8707778c428e9de1d108e5eb79c2c008}} 
+\index{gif.h@{gif.h}!GifWriteCode@{GifWriteCode}}
+\index{GifWriteCode@{GifWriteCode}!gif.h@{gif.h}}
+\doxysubsubsection{\texorpdfstring{GifWriteCode()}{GifWriteCode()}}
+{\footnotesize\ttfamily void Gif\+Write\+Code (\begin{DoxyParamCaption}\item[{FILE $\ast$}]{f,  }\item[{\mbox{\hyperlink{structGifBitStatus}{Gif\+Bit\+Status}} $\ast$}]{stat,  }\item[{uint32\+\_\+t}]{code,  }\item[{uint32\+\_\+t}]{length }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{gif_8h_a27b6c046506ff30d7af6335879c467ae}\label{gif_8h_a27b6c046506ff30d7af6335879c467ae}} 
+\index{gif.h@{gif.h}!GifWriteFrame@{GifWriteFrame}}
+\index{GifWriteFrame@{GifWriteFrame}!gif.h@{gif.h}}
+\doxysubsubsection{\texorpdfstring{GifWriteFrame()}{GifWriteFrame()}}
+{\footnotesize\ttfamily bool Gif\+Write\+Frame (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structGifWriter}{Gif\+Writer}} $\ast$}]{writer,  }\item[{const uint8\+\_\+t $\ast$}]{image,  }\item[{uint32\+\_\+t}]{width,  }\item[{uint32\+\_\+t}]{height,  }\item[{uint32\+\_\+t}]{delay,  }\item[{int}]{bit\+Depth = {\ttfamily 8},  }\item[{bool}]{dither = {\ttfamily false} }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{gif_8h_a0a0a058533dd6a0cc98c6f094e24c39e}\label{gif_8h_a0a0a058533dd6a0cc98c6f094e24c39e}} 
+\index{gif.h@{gif.h}!GifWriteLzwImage@{GifWriteLzwImage}}
+\index{GifWriteLzwImage@{GifWriteLzwImage}!gif.h@{gif.h}}
+\doxysubsubsection{\texorpdfstring{GifWriteLzwImage()}{GifWriteLzwImage()}}
+{\footnotesize\ttfamily void Gif\+Write\+Lzw\+Image (\begin{DoxyParamCaption}\item[{FILE $\ast$}]{f,  }\item[{uint8\+\_\+t $\ast$}]{image,  }\item[{uint32\+\_\+t}]{left,  }\item[{uint32\+\_\+t}]{top,  }\item[{uint32\+\_\+t}]{width,  }\item[{uint32\+\_\+t}]{height,  }\item[{uint32\+\_\+t}]{delay,  }\item[{\mbox{\hyperlink{structGifPalette}{Gif\+Palette}} $\ast$}]{p\+Pal }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{gif_8h_a0e05fd556ad17a66a43f76a501fcff53}\label{gif_8h_a0e05fd556ad17a66a43f76a501fcff53}} 
+\index{gif.h@{gif.h}!GifWritePalette@{GifWritePalette}}
+\index{GifWritePalette@{GifWritePalette}!gif.h@{gif.h}}
+\doxysubsubsection{\texorpdfstring{GifWritePalette()}{GifWritePalette()}}
+{\footnotesize\ttfamily void Gif\+Write\+Palette (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{structGifPalette}{Gif\+Palette}} $\ast$}]{p\+Pal,  }\item[{FILE $\ast$}]{f }\end{DoxyParamCaption})}
+
+
+
+\doxysubsection{Variable Documentation}
+\mbox{\Hypertarget{gif_8h_a3bbc4876f24cc742e2cbb68fa3c88fe9}\label{gif_8h_a3bbc4876f24cc742e2cbb68fa3c88fe9}} 
+\index{gif.h@{gif.h}!kGifTransIndex@{kGifTransIndex}}
+\index{kGifTransIndex@{kGifTransIndex}!gif.h@{gif.h}}
+\doxysubsubsection{\texorpdfstring{kGifTransIndex}{kGifTransIndex}}
+{\footnotesize\ttfamily const int k\+Gif\+Trans\+Index = 0}
+
+
+
+Индекс прозрачного цвета в палитре GIF изображения. 
+

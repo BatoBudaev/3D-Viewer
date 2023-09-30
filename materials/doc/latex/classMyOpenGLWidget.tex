@@ -1,0 +1,288 @@
+\hypertarget{classMyOpenGLWidget}{}\doxysection{My\+Open\+GLWidget Class Reference}
+\label{classMyOpenGLWidget}\index{MyOpenGLWidget@{MyOpenGLWidget}}
+
+
+Класс для отображения 3D модели с использованием Open\+GL.  
+
+
+
+
+{\ttfamily \#include $<$myopenglwidget.\+h$>$}
+
+Inheritance diagram for My\+Open\+GLWidget\+:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{classMyOpenGLWidget}
+\end{center}
+\end{figure}
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{classMyOpenGLWidget_a53f6f4236b6a2399a165b091376d94a5}{My\+Open\+GLWidget}} (QWidget $\ast$parent=nullptr)
+\begin{DoxyCompactList}\small\item\em Конструктор класса \mbox{\hyperlink{classMyOpenGLWidget}{My\+Open\+GLWidget}}. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{classMyOpenGLWidget_a4ab753bd9d73f9103facacfe2d7d48f0}{initialize\+GL}} () override
+\begin{DoxyCompactList}\small\item\em Инициализация Open\+GL. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{classMyOpenGLWidget_a1d3b0e72c01381c08d0cef905920601a}{resize\+GL}} (int w, int h) override
+\begin{DoxyCompactList}\small\item\em Обработчик изменения размеров виджета. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{classMyOpenGLWidget_a9c4399d47addbd03bcf57f9baffd66d2}{paint\+GL}} () override
+\begin{DoxyCompactList}\small\item\em Отрисовка сцены. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{classMyOpenGLWidget_a95a9d23c00fdfcefe0758f77a590665a}{set\+Projection}} (int projection)
+\begin{DoxyCompactList}\small\item\em Устанавливает тип проекции. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{classMyOpenGLWidget_acf2596b2b5e9553842a252a53eec0517}{set\+Rotate}} (int flagx, int flagy, int flagz, int val)
+\begin{DoxyCompactList}\small\item\em Устанавливает углы поворота модели. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{classMyOpenGLWidget_af286b3f0312f2840340f54a87f2f5cb2}{set\+Scale}} (int new\+\_\+val)
+\begin{DoxyCompactList}\small\item\em Устанавливает масштаб модели. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{classMyOpenGLWidget_afcd5c0f0faa7a81f5db69e5374a80197}{set\+Move}} (int flagx, int flagy, int flagz, int val)
+\begin{DoxyCompactList}\small\item\em Устанавливает перемещение модели. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{classMyOpenGLWidget_a5209f6f615f6cd1f170ac7c2f31b8444}{update\+Settings}} (QColor line\+Color, double line\+Size, int line\+Type, QColor vertex\+Color, double vertex\+Size, int vertex\+Type, QColor background\+Color)
+\begin{DoxyCompactList}\small\item\em Обновляет настройки отображения модели. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{classMyOpenGLWidget_a2912886484c4e0a3443a2812100d4bee}{reload\+Model}} ()
+\begin{DoxyCompactList}\small\item\em Перезагружает модель. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+std\+::string \mbox{\hyperlink{classMyOpenGLWidget_a0183a4af8184871b456ca3808be0e913}{path}}
+\end{DoxyCompactItemize}
+\doxysubsection*{Friends}
+\begin{DoxyCompactItemize}
+\item 
+class \mbox{\hyperlink{classMyOpenGLWidget_af9db4b672c4d3104f5541893e08e1809}{Main\+Window}}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Класс для отображения 3D модели с использованием Open\+GL. 
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classMyOpenGLWidget_a53f6f4236b6a2399a165b091376d94a5}\label{classMyOpenGLWidget_a53f6f4236b6a2399a165b091376d94a5}} 
+\index{MyOpenGLWidget@{MyOpenGLWidget}!MyOpenGLWidget@{MyOpenGLWidget}}
+\index{MyOpenGLWidget@{MyOpenGLWidget}!MyOpenGLWidget@{MyOpenGLWidget}}
+\doxysubsubsection{\texorpdfstring{MyOpenGLWidget()}{MyOpenGLWidget()}}
+{\footnotesize\ttfamily My\+Open\+GLWidget\+::\+My\+Open\+GLWidget (\begin{DoxyParamCaption}\item[{QWidget $\ast$}]{parent = {\ttfamily nullptr} }\end{DoxyParamCaption})}
+
+
+
+Конструктор класса \mbox{\hyperlink{classMyOpenGLWidget}{My\+Open\+GLWidget}}. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em parent} & Указатель на родительский виджет.\\
+\hline
+{\em parent} & Родительский виджет. \\
+\hline
+\end{DoxyParams}
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\Hypertarget{classMyOpenGLWidget_a4ab753bd9d73f9103facacfe2d7d48f0}\label{classMyOpenGLWidget_a4ab753bd9d73f9103facacfe2d7d48f0}} 
+\index{MyOpenGLWidget@{MyOpenGLWidget}!initializeGL@{initializeGL}}
+\index{initializeGL@{initializeGL}!MyOpenGLWidget@{MyOpenGLWidget}}
+\doxysubsubsection{\texorpdfstring{initializeGL()}{initializeGL()}}
+{\footnotesize\ttfamily void My\+Open\+GLWidget\+::initialize\+GL (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}}
+
+
+
+Инициализация Open\+GL. 
+
+Метод для инициализации Open\+GL контекста. \mbox{\Hypertarget{classMyOpenGLWidget_a9c4399d47addbd03bcf57f9baffd66d2}\label{classMyOpenGLWidget_a9c4399d47addbd03bcf57f9baffd66d2}} 
+\index{MyOpenGLWidget@{MyOpenGLWidget}!paintGL@{paintGL}}
+\index{paintGL@{paintGL}!MyOpenGLWidget@{MyOpenGLWidget}}
+\doxysubsubsection{\texorpdfstring{paintGL()}{paintGL()}}
+{\footnotesize\ttfamily void My\+Open\+GLWidget\+::paint\+GL (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}}
+
+
+
+Отрисовка сцены. 
+
+Метод для отрисовки виджета. \mbox{\Hypertarget{classMyOpenGLWidget_a2912886484c4e0a3443a2812100d4bee}\label{classMyOpenGLWidget_a2912886484c4e0a3443a2812100d4bee}} 
+\index{MyOpenGLWidget@{MyOpenGLWidget}!reloadModel@{reloadModel}}
+\index{reloadModel@{reloadModel}!MyOpenGLWidget@{MyOpenGLWidget}}
+\doxysubsubsection{\texorpdfstring{reloadModel()}{reloadModel()}}
+{\footnotesize\ttfamily void My\+Open\+GLWidget\+::reload\+Model (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Перезагружает модель. 
+
+Метод для перезагрузки модели. \mbox{\Hypertarget{classMyOpenGLWidget_a1d3b0e72c01381c08d0cef905920601a}\label{classMyOpenGLWidget_a1d3b0e72c01381c08d0cef905920601a}} 
+\index{MyOpenGLWidget@{MyOpenGLWidget}!resizeGL@{resizeGL}}
+\index{resizeGL@{resizeGL}!MyOpenGLWidget@{MyOpenGLWidget}}
+\doxysubsubsection{\texorpdfstring{resizeGL()}{resizeGL()}}
+{\footnotesize\ttfamily void My\+Open\+GLWidget\+::resize\+GL (\begin{DoxyParamCaption}\item[{int}]{w,  }\item[{int}]{h }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}}
+
+
+
+Обработчик изменения размеров виджета. 
+
+Метод для изменения размеров виджета.
+
+
+\begin{DoxyParams}{Parameters}
+{\em w} & Новая ширина виджета. \\
+\hline
+{\em h} & Новая высота виджета. \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{classMyOpenGLWidget_afcd5c0f0faa7a81f5db69e5374a80197}\label{classMyOpenGLWidget_afcd5c0f0faa7a81f5db69e5374a80197}} 
+\index{MyOpenGLWidget@{MyOpenGLWidget}!setMove@{setMove}}
+\index{setMove@{setMove}!MyOpenGLWidget@{MyOpenGLWidget}}
+\doxysubsubsection{\texorpdfstring{setMove()}{setMove()}}
+{\footnotesize\ttfamily void My\+Open\+GLWidget\+::set\+Move (\begin{DoxyParamCaption}\item[{int}]{flagx,  }\item[{int}]{flagy,  }\item[{int}]{flagz,  }\item[{int}]{val }\end{DoxyParamCaption})}
+
+
+
+Устанавливает перемещение модели. 
+
+Метод для установки смещения модели.
+
+
+\begin{DoxyParams}{Parameters}
+{\em flagx} & Флаг включения/выключения перемещения по X. \\
+\hline
+{\em flagy} & Флаг включения/выключения перемещения по Y. \\
+\hline
+{\em flagz} & Флаг включения/выключения перемещения по Z. \\
+\hline
+{\em val} & Значение перемещения.\\
+\hline
+{\em flagx} & Флаг смещения по X (1 -\/ включено, 0 -\/ выключено). \\
+\hline
+{\em flagy} & Флаг смещения по Y (1 -\/ включено, 0 -\/ выключено). \\
+\hline
+{\em flagz} & Флаг смещения по Z (1 -\/ включено, 0 -\/ выключено). \\
+\hline
+{\em val} & Значение смещения. \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{classMyOpenGLWidget_a95a9d23c00fdfcefe0758f77a590665a}\label{classMyOpenGLWidget_a95a9d23c00fdfcefe0758f77a590665a}} 
+\index{MyOpenGLWidget@{MyOpenGLWidget}!setProjection@{setProjection}}
+\index{setProjection@{setProjection}!MyOpenGLWidget@{MyOpenGLWidget}}
+\doxysubsubsection{\texorpdfstring{setProjection()}{setProjection()}}
+{\footnotesize\ttfamily void My\+Open\+GLWidget\+::set\+Projection (\begin{DoxyParamCaption}\item[{int}]{projection }\end{DoxyParamCaption})}
+
+
+
+Устанавливает тип проекции. 
+
+Метод для установки типа проекции.
+
+
+\begin{DoxyParams}{Parameters}
+{\em projection} & Тип проекции (0 -\/ ортографическая, 1 -\/ перспективная). \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{classMyOpenGLWidget_acf2596b2b5e9553842a252a53eec0517}\label{classMyOpenGLWidget_acf2596b2b5e9553842a252a53eec0517}} 
+\index{MyOpenGLWidget@{MyOpenGLWidget}!setRotate@{setRotate}}
+\index{setRotate@{setRotate}!MyOpenGLWidget@{MyOpenGLWidget}}
+\doxysubsubsection{\texorpdfstring{setRotate()}{setRotate()}}
+{\footnotesize\ttfamily void My\+Open\+GLWidget\+::set\+Rotate (\begin{DoxyParamCaption}\item[{int}]{flagx,  }\item[{int}]{flagy,  }\item[{int}]{flagz,  }\item[{int}]{val }\end{DoxyParamCaption})}
+
+
+
+Устанавливает углы поворота модели. 
+
+Метод для установки угла вращения по осям.
+
+
+\begin{DoxyParams}{Parameters}
+{\em flagx} & Флаг включения/выключения поворота по X. \\
+\hline
+{\em flagy} & Флаг включения/выключения поворота по Y. \\
+\hline
+{\em flagz} & Флаг включения/выключения поворота по Z. \\
+\hline
+{\em val} & Угол поворота.\\
+\hline
+{\em flagx} & Флаг вращения по X (1 -\/ включено, 0 -\/ выключено). \\
+\hline
+{\em flagy} & Флаг вращения по Y (1 -\/ включено, 0 -\/ выключено). \\
+\hline
+{\em flagz} & Флаг вращения по Z (1 -\/ включено, 0 -\/ выключено). \\
+\hline
+{\em val} & Угол в градусах. \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{classMyOpenGLWidget_af286b3f0312f2840340f54a87f2f5cb2}\label{classMyOpenGLWidget_af286b3f0312f2840340f54a87f2f5cb2}} 
+\index{MyOpenGLWidget@{MyOpenGLWidget}!setScale@{setScale}}
+\index{setScale@{setScale}!MyOpenGLWidget@{MyOpenGLWidget}}
+\doxysubsubsection{\texorpdfstring{setScale()}{setScale()}}
+{\footnotesize\ttfamily void My\+Open\+GLWidget\+::set\+Scale (\begin{DoxyParamCaption}\item[{int}]{new\+\_\+scale }\end{DoxyParamCaption})}
+
+
+
+Устанавливает масштаб модели. 
+
+Метод для установки масштабирования модели.
+
+
+\begin{DoxyParams}{Parameters}
+{\em new\+\_\+scale} & Новый масштаб. \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{classMyOpenGLWidget_a5209f6f615f6cd1f170ac7c2f31b8444}\label{classMyOpenGLWidget_a5209f6f615f6cd1f170ac7c2f31b8444}} 
+\index{MyOpenGLWidget@{MyOpenGLWidget}!updateSettings@{updateSettings}}
+\index{updateSettings@{updateSettings}!MyOpenGLWidget@{MyOpenGLWidget}}
+\doxysubsubsection{\texorpdfstring{updateSettings()}{updateSettings()}}
+{\footnotesize\ttfamily void My\+Open\+GLWidget\+::update\+Settings (\begin{DoxyParamCaption}\item[{QColor}]{line\+Color,  }\item[{double}]{line\+Size,  }\item[{int}]{line\+Type,  }\item[{QColor}]{vertex\+Color,  }\item[{double}]{vertex\+Size,  }\item[{int}]{vertex\+Type,  }\item[{QColor}]{background\+Color }\end{DoxyParamCaption})}
+
+
+
+Обновляет настройки отображения модели. 
+
+Метод для обновления настроек отображения.
+
+
+\begin{DoxyParams}{Parameters}
+{\em line\+Color} & Цвет линий модели. \\
+\hline
+{\em line\+Size} & Ширина линий модели. \\
+\hline
+{\em line\+Type} & Тип линий (0 -\/ сплошные, 1 -\/ пунктирные). \\
+\hline
+{\em vertex\+Color} & Цвет вершин модели. \\
+\hline
+{\em vertex\+Size} & Размер вершин модели. \\
+\hline
+{\em vertex\+Type} & Тип вершин (0 -\/ квадратные, 1 -\/ круглые, 2 -\/ без вершин). \\
+\hline
+{\em background\+Color} & Цвет фона виджета.\\
+\hline
+{\em line\+Color} & Цвет линий. \\
+\hline
+{\em line\+Size} & Толщина линий. \\
+\hline
+{\em line\+Type} & Тип линий (0 -\/ сплошные, 1 -\/ пунктирные). \\
+\hline
+{\em vertex\+Color} & Цвет вершин. \\
+\hline
+{\em vertex\+Size} & Размер вершин. \\
+\hline
+{\em vertex\+Type} & Тип вершин (0 -\/ квадратные, 1 -\/ круглые, 2 -\/ выключены). \\
+\hline
+{\em background\+Color} & Цвет фона. \\
+\hline
+\end{DoxyParams}
+
+
+\doxysubsection{Friends And Related Function Documentation}
+\mbox{\Hypertarget{classMyOpenGLWidget_af9db4b672c4d3104f5541893e08e1809}\label{classMyOpenGLWidget_af9db4b672c4d3104f5541893e08e1809}} 
+\index{MyOpenGLWidget@{MyOpenGLWidget}!MainWindow@{MainWindow}}
+\index{MainWindow@{MainWindow}!MyOpenGLWidget@{MyOpenGLWidget}}
+\doxysubsubsection{\texorpdfstring{MainWindow}{MainWindow}}
+{\footnotesize\ttfamily friend class \mbox{\hyperlink{classMainWindow}{Main\+Window}}\hspace{0.3cm}{\ttfamily [friend]}}
+
+
+
+\doxysubsection{Member Data Documentation}
+\mbox{\Hypertarget{classMyOpenGLWidget_a0183a4af8184871b456ca3808be0e913}\label{classMyOpenGLWidget_a0183a4af8184871b456ca3808be0e913}} 
+\index{MyOpenGLWidget@{MyOpenGLWidget}!path@{path}}
+\index{path@{path}!MyOpenGLWidget@{MyOpenGLWidget}}
+\doxysubsubsection{\texorpdfstring{path}{path}}
+{\footnotesize\ttfamily std\+::string My\+Open\+GLWidget\+::path}
+
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+QT3\+DViewer/\mbox{\hyperlink{myopenglwidget_8h}{myopenglwidget.\+h}}\item 
+QT3\+DViewer/\mbox{\hyperlink{myopenglwidget_8cpp}{myopenglwidget.\+cpp}}\end{DoxyCompactItemize}

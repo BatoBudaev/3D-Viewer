@@ -1,0 +1,68 @@
+\hypertarget{myopenglwidget_8h_source}{}\doxysection{myopenglwidget.\+h}
+\label{myopenglwidget_8h_source}\index{QT3DViewer/myopenglwidget.h@{QT3DViewer/myopenglwidget.h}}
+\mbox{\hyperlink{myopenglwidget_8h}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ }
+\DoxyCodeLine{00006\ \textcolor{preprocessor}{\#ifndef\ MYOPENGLWIDGET\_H}}
+\DoxyCodeLine{00007\ \textcolor{preprocessor}{\#define\ MYOPENGLWIDGET\_H}}
+\DoxyCodeLine{00008\ }
+\DoxyCodeLine{00009\ \textcolor{preprocessor}{\#include\ <QMainWindow>}}
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#include\ <QOpenGLWidget>}}
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#include\ <QOpenGLFunctions>}}
+\DoxyCodeLine{00012\ \textcolor{preprocessor}{\#include\ <QtOpenGL>}}
+\DoxyCodeLine{00013\ \textcolor{preprocessor}{\#include\ <QWidget>}}
+\DoxyCodeLine{00014\ \textcolor{preprocessor}{\#include\ <QColor>}}
+\DoxyCodeLine{00015\ \textcolor{preprocessor}{\#include\ <QDebug>}}
+\DoxyCodeLine{00016\ }
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#ifdef\ \_\_cplusplus}}
+\DoxyCodeLine{00018\ \textcolor{keyword}{extern}\ \textcolor{stringliteral}{"{}C"{}}\ \{}
+\DoxyCodeLine{00019\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00020\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{viewer__back_8h}{viewer\_back.h}}"{}}}
+\DoxyCodeLine{00021\ \textcolor{preprocessor}{\#ifdef\ \_\_cplusplus}}
+\DoxyCodeLine{00022\ \}}
+\DoxyCodeLine{00023\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00024\ \textcolor{comment}{//\#include\ <gl/GLU.h>}}
+\DoxyCodeLine{00025\ \textcolor{comment}{//\#pragma\ comment(lib,"{}opengl32.lib"{})}}
+\DoxyCodeLine{00026\ \textcolor{comment}{//\#pragma\ comment(lib,"{}GLU32.lib"{})}}
+\DoxyCodeLine{00027\ }
+\DoxyCodeLine{00028\ }
+\DoxyCodeLine{00033\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classMyOpenGLWidget}{MyOpenGLWidget}}\ :\ \textcolor{keyword}{public}\ QOpenGLWidget,\ \textcolor{keyword}{public}\ QOpenGLFunctions}
+\DoxyCodeLine{00034\ \{}
+\DoxyCodeLine{00035\ \ \ \ \ Q\_OBJECT}
+\DoxyCodeLine{00036\ \ \ \ \ \textcolor{keyword}{friend}\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classMainWindow}{MainWindow}};}
+\DoxyCodeLine{00037\ }
+\DoxyCodeLine{00038\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00039\ \ \ \ \ std::string\ \mbox{\hyperlink{classMyOpenGLWidget_a0183a4af8184871b456ca3808be0e913}{path}};\ \textcolor{comment}{//=\ "{}/Users/thomasik/C8\_3DViewer\_v1.0-\/2/src/obj/cuberubik.obj"{};}}
+\DoxyCodeLine{00044\ \textcolor{comment}{}\ \ \ \ \mbox{\hyperlink{classMyOpenGLWidget}{MyOpenGLWidget}}(QWidget\ *parent\ =\ \textcolor{keyword}{nullptr});}
+\DoxyCodeLine{00048\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classMyOpenGLWidget_a4ab753bd9d73f9103facacfe2d7d48f0}{initializeGL}}()\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00054\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classMyOpenGLWidget_a1d3b0e72c01381c08d0cef905920601a}{resizeGL}}(\textcolor{keywordtype}{int}\ w,\ \textcolor{keywordtype}{int}\ h)\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00058\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classMyOpenGLWidget_a9c4399d47addbd03bcf57f9baffd66d2}{paintGL}}()\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00063\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classMyOpenGLWidget_a95a9d23c00fdfcefe0758f77a590665a}{setProjection}}(\textcolor{keywordtype}{int}\ projection);}
+\DoxyCodeLine{00071\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classMyOpenGLWidget_acf2596b2b5e9553842a252a53eec0517}{setRotate}}(\textcolor{keywordtype}{int}\ flagx,\ \textcolor{keywordtype}{int}\ flagy,\ \textcolor{keywordtype}{int}\ flagz,\ \textcolor{keywordtype}{int}\ val);}
+\DoxyCodeLine{00076\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classMyOpenGLWidget_af286b3f0312f2840340f54a87f2f5cb2}{setScale}}(\textcolor{keywordtype}{int}\ new\_val);}
+\DoxyCodeLine{00084\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classMyOpenGLWidget_afcd5c0f0faa7a81f5db69e5374a80197}{setMove}}(\textcolor{keywordtype}{int}\ flagx,\ \textcolor{keywordtype}{int}\ flagy,\ \textcolor{keywordtype}{int}\ flagz,\ \textcolor{keywordtype}{int}\ val);}
+\DoxyCodeLine{00095\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classMyOpenGLWidget_a5209f6f615f6cd1f170ac7c2f31b8444}{updateSettings}}(QColor\ lineColor,\ \textcolor{keywordtype}{double}\ lineSize,\ \textcolor{keywordtype}{int}\ lineType,\ QColor\ vertexColor,\ \textcolor{keywordtype}{double}\ vertexSize,\ \textcolor{keywordtype}{int}\ vertexType,\ QColor\ backgroundColor);}
+\DoxyCodeLine{00099\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classMyOpenGLWidget_a2912886484c4e0a3443a2812100d4bee}{reloadModel}}();}
+\DoxyCodeLine{00100\ }
+\DoxyCodeLine{00101\ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00102\ \ \ \ \ \mbox{\hyperlink{structvertexes}{vertexes\_t}}\ vv\ =\ \{0\};}
+\DoxyCodeLine{00103\ \ \ \ \ \mbox{\hyperlink{structfacets}{facets\_t}}\ ff\ =\ \{0\};}
+\DoxyCodeLine{00104\ \ \ \ \ \mbox{\hyperlink{structvertexes}{vertexes\_t}}\ vv\_copy\ =\ \{0\};}
+\DoxyCodeLine{00105\ \ \ \ \ \mbox{\hyperlink{structfacets}{facets\_t}}\ ff\_copy\ =\ \{0\};}
+\DoxyCodeLine{00106\ \ \ \ \ \textcolor{keywordtype}{int}\ projection;}
+\DoxyCodeLine{00107\ \ \ \ \ \textcolor{keywordtype}{int}\ rotateX,\ rotateY,\ rotateZ;}
+\DoxyCodeLine{00108\ \ \ \ \ \textcolor{keywordtype}{int}\ cnt\_v,\ cnt\_f;}
+\DoxyCodeLine{00109\ \ \ \ \ \textcolor{keywordtype}{int}\ scale\_val;}
+\DoxyCodeLine{00110\ \ \ \ \ \textcolor{keywordtype}{int}\ moveX,\ moveY,\ moveZ;}
+\DoxyCodeLine{00111\ \ \ \ \ QColor\ lineColor;}
+\DoxyCodeLine{00112\ \ \ \ \ QColor\ vertexColor;}
+\DoxyCodeLine{00113\ \ \ \ \ \textcolor{keywordtype}{double}\ lineSize;}
+\DoxyCodeLine{00114\ \ \ \ \ \textcolor{keywordtype}{double}\ vertexSize;}
+\DoxyCodeLine{00115\ \ \ \ \ \textcolor{keywordtype}{int}\ lineType;}
+\DoxyCodeLine{00116\ \ \ \ \ \textcolor{keywordtype}{int}\ vertexType;}
+\DoxyCodeLine{00117\ \ \ \ \ QColor\ backgroundColor;}
+\DoxyCodeLine{00118\ \};}
+\DoxyCodeLine{00119\ }
+\DoxyCodeLine{00120\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{//MYOPENGLWIDGET\_H}}
+
+\end{DoxyCode}
